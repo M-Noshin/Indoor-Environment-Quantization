@@ -14,11 +14,11 @@ cd ai8x-training
 
 | Target folder              | Copy from this repo                               | Purpose                      |
 |---------------------------|--------------------------------------------------|-----------------------------|
-| `ai8x-training/data/`     | `data/indoor_environment/` folder (contains 8 `.mat` files) | Dataset                   |
-| `ai8x-training/datasets/` | `datasets/indoor_environment.py`                          | Data loader script         |
-| `ai8x-training/models/`   | `models/ai85net_indoor_env_v1.py`                       | Model using ai8x layers    |
-| `ai8x-training/policies/` | `policies/schedule-indoor-env.yaml`, `policies/qat_policy_indoor.yaml` | LR schedule, QAT config |
-| `ai8x-training/scripts/`  | `scripts/train_indoor.sh`, `scripts/evaluate_indoor.sh`         | Training/eval scripts      |
+| `./data/`     | `data/indoor_environment/` folder (contains 8 `.mat` files) | Dataset                   |
+| `./datasets/` | `datasets/indoor_environment.py`                          | Data loader script         |
+| `./models/`   | `models/ai85net_indoor_env_v1.py`                       | Model using ai8x layers    |
+| `./policies/` | `policies/schedule-indoor-env.yaml`, `policies/qat_policy_indoor.yaml` | LR schedule, QAT config |
+| `./scripts/`  | `scripts/train_indoor.sh`, `scripts/evaluate_indoor.sh`         | Training/eval scripts      |
 
 3️⃣ **Train the model:**
 
