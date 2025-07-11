@@ -1,0 +1,9 @@
+---
+# Quantization-Aware Training (QAT) policy for the Indoor Environment CNN
+# Smooth switch after float warm-up, with clipping and extra LSB head-room.
+
+start_epoch: 8          # begin QAT after 8 epochs
+weight_bits: 8          # 8-bit weights
+extra_bit_shift: 1      # allow one extra LSB where needed
+shift_quantile: 0.999   # retain 0.1 % outliers
+outlier_removal_z_score: 6.0 

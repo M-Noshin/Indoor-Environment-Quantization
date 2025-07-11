@@ -1,0 +1,17 @@
+# Indoor Environment training schedule with QAT LR restart
+# Using MultiStepMultiGammaLR to handle FP training + QAT phases
+
+version: 1
+
+lr_schedulers:
+  training_lr:                     
+    class: MultiStepMultiGammaLR
+    milestones: [3, 11]             # Reduce at epoch 3, then boost for QAT at epoch 5  
+    gammas: [0.0005, 400]          # 0.001 -> 0.0000005, then 0.0000005 -> 0.0002
+
+policies:
+  - lr_scheduler:                  
+      instance_name: training_lr
+    starting_epoch: 0
+    ending_epoch: 20                
+    frequency: 1 
