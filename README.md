@@ -2,7 +2,7 @@
 
 _Muhammed Noshin, Hamza A. Abushahla, and Dr. Mohamed I. AlHajri_
 
-This repository contains code and resources for the paper: "Title Here (https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=4234)".
+This repository contains code and resources for the paper: [Title Here](https://ieeexplore.ieee.org/document/11048877).
 
 ## 📌 Overview
 This work presents...
