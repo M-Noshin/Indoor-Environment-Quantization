@@ -1,6 +1,22 @@
 # Indoor-Environment-Quantization
 
-## 📦 Setup and Training
+_Muhammed Noshin, Hamza A. Abushahla, and Dr. Mohamed I. AlHajri_
+
+This repository contains code and resources for the paper: "Title Here (https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=4234)".
+
+## 📌 Overview
+This work presents...
+
+## 📁Repository Structure
+- `training/`
+    Files needed for the `ai8x-training`, including the dataset, dataloader, network, training and quantization scripts
+
+- `synthesis/`
+    Files needed for the `ai8x-synthesis`, including files for model synthesis and deployment on hardware, including the and MAX78002 hardware configuration YAML.
+
+
+## 📦 Getting Started
+
 
 1️⃣ **Clone and install [ai8x-training](https://github.com/MaximIntegratedAI/ai8x-training)**
 
