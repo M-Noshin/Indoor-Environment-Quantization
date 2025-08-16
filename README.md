@@ -7,39 +7,50 @@ This repository contains code and resources for the paper: [Title Here](https://
 ## 📌 Overview
 This work presents...
 
-## 📁Repository Structure
-- `training/`
-    Files needed for the `ai8x-training`, including the dataset, dataloader, network, training and quantization scripts
+## 📁 Repository Structure
 
-- `synthesis/`
-    Files needed for the `ai8x-synthesis`, including files for model synthesis and deployment on hardware, including the and MAX78002 hardware configuration YAML.
+* `training/`
+  Files related to [ai8x-training](https://github.com/MaximIntegratedAI/ai8x-training), including the dataset, dataloader, model, training, and quantization scripts.
+
+* `synthesis/`
+  Files related to [ai8x-synthesis](https://github.com/MaximIntegratedAI/ai8x-synthesis), including model synthesis and deployment on hardware (e.g., MAX78002 configuration YAMLs).
 
 
 ## 📦 Getting Started
 
+### 1️⃣ Install `ai8x-training`
 
-1️⃣ **Clone and install [ai8x-training](https://github.com/MaximIntegratedAI/ai8x-training)**
+Clone and install the official repository:
 
 ```bash
 git clone https://github.com/MaximIntegratedAI/ai8x-training.git
 cd ai8x-training
-# Follow their install instructions (e.g., create conda env, install requirements)
+# Follow their installation steps (e.g., conda environment, requirements)
 ```
 
-2️⃣ **Copy project files into `ai8x-training`:**
+---
 
-| Target folder              | Copy from this repo                               | Purpose                      |
-|---------------------------|--------------------------------------------------|-----------------------------|
-| `./data/`     | `data/indoor_environment/` folder (contains 8 `.mat` files) | Dataset                   |
-| `./datasets/` | `datasets/indoor_environment.py`                          | Data loader script         |
-| `./models/`   | `models/ai85net_indoor_env_v1.py`                       | Model using ai8x layers    |
-| `./policies/` | `policies/schedule-indoor-env.yaml`, `policies/qat_policy_indoor.yaml` | LR schedule, QAT config |
-| `./scripts/`  | `scripts/train_indoor.sh`, `scripts/evaluate_indoor.sh`         | Training/eval scripts      |
+### 2️⃣ Copy project files
 
-3️⃣ **Train the model:**
+Copy the contents of this repo’s `training/` folder into the corresponding folders of your local `ai8x-training` installation:
+
+| Target folder (inside `ai8x-training/`) | Copy from (`training/` in this repo)                                                     | Purpose                                    |
+| --------------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------ |
+| `./data/`                               | `training/data/indoor_environment/` (contains 8 `.mat` files)                            | Dataset                                    |
+| `./datasets/`                           | `training/datasets/indoor_environment.py`                                                | Dataloader script                          |
+| `./models/`                             | `training/models/ai85net_indoor_env_v1.py`                                               | Indoor-environment model using ai8x layers |
+| `./policies/`                           | `training/policies/schedule-indoor-env.yaml`, `training/policies/qat_policy_indoor.yaml` | LR schedule & QAT config                   |
+| `./scripts/`                            | `training/scripts/train_indoor.sh`, `training/scripts/evaluate_indoor.sh`                | Training & evaluation scripts              |
+
+---
+
+### 3️⃣ Run training & evaluation
+
+From inside the `ai8x-training` directory:
 
 ```bash
-(ai8x-training) $ sh scripts/train_indoor.sh
+# Training
+bash scripts/train_indoor.sh
 ```
 
 Edit `train_indoor.sh` to adjust epochs, batch size, etc.
