@@ -50,10 +50,13 @@ From inside the `ai8x-training` directory:
 
 ```bash
 # Training
-bash scripts/train_indoor.sh
+sh scripts/train_indoor.sh
 ```
 
 Edit `train_indoor.sh` to adjust epochs, batch size, etc.
+
+This will run the training + initiate QAT at the epoch in the policy file (e.g., epoch 8) and will save the best model in a checkpoint in the corresponding logs folder. 
+The logs folder will contain `checkpoint.pth.tar` and `best.pth.tar`, these are the floating point models, and `qat_checkpoint.pth.tar` and `qat_best.pth.tar` are the models from QAT. Note these models are not quantized yet. 
 
 ---
 
@@ -74,7 +77,7 @@ python ai8x-synthesis/quantize.py \
   --device MAX78000
 ```
 
-This will generate `indoor_run_qat_best.pth_q8.tar`, the INT8 quantized model.
+This will generate `indoor_run_qat_best.pth_q8.tar`, the INT8 quantized model in this case.
 
 ---
 
