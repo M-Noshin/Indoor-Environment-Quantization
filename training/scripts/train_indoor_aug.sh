@@ -1,6 +1,6 @@
 #!/bin/sh
-python train_Now.py --epochs 10 --batch-size 256 \
-  --optimizer Adam --lr 0.001 --weight-decay 0.0002 \
+python train.py --epochs 10 --batch-size 256 \
+  --optimizer Adam --lr 0.001 --weight-decay 0.0005 \
   --use-bias --deterministic \
   --model ai85indoorenvnetv1 --dataset IndoorEnvironmentAug --data data/indoor_environment \
   --compress policies/schedule-indoor-env.yaml \
