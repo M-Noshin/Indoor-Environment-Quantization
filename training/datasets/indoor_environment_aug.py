@@ -37,6 +37,47 @@ class ToUnitInterval:
         return (tensor - min_val) / (max_val - min_val)
 
 
+class CTFAugmentation:
+    """Augmentation for CTF data to improve spatial generalization"""
+    
+    def __init__(self, noise_std=0.005, freq_shift_range=2, apply_prob=0.5):
+        self.noise_std = noise_std
+        self.freq_shift_range = freq_shift_range
+        self.apply_prob = apply_prob
+    
+    def __call__(self, tensor):
+        if random.random() > self.apply_prob:
+            return tensor
+            
+        # Add small Gaussian noise to simulate measurement variations
+        if random.random() > 0.6:
+            noise = torch.randn_like(tensor) * self.noise_std
+            tensor = tensor + noise
+        
+        # Small frequency shifts to simulate slight calibration differences
+        if random.random() > 0.6 and self.freq_shift_range > 0:
+            shift = random.randint(-self.freq_shift_range, self.freq_shift_range)
+            if shift != 0:
+                tensor = torch.roll(tensor, shifts=shift, dims=0)
+        
+        # Small amplitude scaling to simulate gain variations
+        if random.random() > 0.6:
+            scale = 0.9 + random.random() * 0.2  # Scale between 0.9 and 1.1 (more variation)
+            tensor = tensor * scale
+        
+        # Phase perturbation for complex data
+        if random.random() > 0.7:
+            phase_noise = (random.random() - 0.5) * 0.1  # Small phase shifts
+            real_part = tensor[..., 0]
+            imag_part = tensor[..., 1] 
+            # Apply small rotation in complex plane
+            cos_p, sin_p = np.cos(phase_noise), np.sin(phase_noise)
+            tensor[..., 0] = real_part * cos_p - imag_part * sin_p
+            tensor[..., 1] = real_part * sin_p + imag_part * cos_p
+            
+        return tensor
+
+
 class IndoorEnvironmentDataset(Dataset):
     """
     Indoor Environment CTF Dataset
@@ -103,7 +144,7 @@ class IndoorEnvironmentDataset(Dataset):
         CTF_lab = np.concatenate((CTF_lab_static_array, CTF_lab_mov_array), axis=0)
         CTF_SC = np.concatenate((CTF_SC_static_array, CTF_SC_mov_array), axis=0)
         
-        # Data splitting logic (exactly from the notebook)
+        # Data splitting logic - 75/25 split for better generalization
         num_grid_points = 194 * 2  # 388
         num_measurements = 200
         num_train_points = int(0.75 * num_grid_points)  # 291
@@ -135,14 +176,14 @@ class IndoorEnvironmentDataset(Dataset):
         large_X_test = test_set.reshape([-1, 101, 2])    # (77600, 101, 2)
         
         # Create labels (4 classes: 0=Classroom, 1=Corridor, 2=Lab, 3=Staircase)
-        # Training labels
+        # Training labels (75% of 388 grid points = 291)
         label1 = np.ones([291 * 200]) * 0  # classroom
         label2 = np.ones([291 * 200]) * 1  # corridor  
         label3 = np.ones([291 * 200]) * 2  # lab
         label4 = np.ones([291 * 200]) * 3  # staircase
         large_Y_train = np.concatenate([label1, label2, label3, label4])
         
-        # Test labels
+        # Test labels (25% of 388 grid points = 97)
         label5 = np.ones([97 * 200]) * 0  # classroom
         label6 = np.ones([97 * 200]) * 1  # corridor
         label7 = np.ones([97 * 200]) * 2  # lab
@@ -211,8 +252,15 @@ def indoor_environment_get_datasets(data, load_train=True, load_test=True):
     # can directly attach ai8x.normalize() as the only transform.
     # ------------------------------------------------------------------
 
-    # Per-sample min-max scale to [0,1]  → then map to int8 range
-    common_transform = transforms.Compose([
+    # Training transform with more aggressive augmentation for better spatial generalization
+    train_transform = transforms.Compose([
+        ToUnitInterval(),
+        CTFAugmentation(noise_std=0.01, freq_shift_range=3, apply_prob=0.7),
+        ai8x.normalize(args=args)
+    ])
+    
+    # Test transform without augmentation
+    test_transform = transforms.Compose([
         ToUnitInterval(),
         ai8x.normalize(args=args)
     ])
@@ -221,7 +269,7 @@ def indoor_environment_get_datasets(data, load_train=True, load_test=True):
         train_dataset = IndoorEnvironmentDataset(
             root=data_dir,
             train=True,
-            transform=common_transform,
+            transform=train_transform,
             download=False
         )
     else:
@@ -231,7 +279,7 @@ def indoor_environment_get_datasets(data, load_train=True, load_test=True):
         test_dataset = IndoorEnvironmentDataset(
             root=data_dir,
             train=False,
-            transform=common_transform,
+            transform=test_transform,
             download=False
         )
     else:
@@ -242,7 +290,7 @@ def indoor_environment_get_datasets(data, load_train=True, load_test=True):
 
 datasets = [
     {
-        'name': 'IndoorEnvironment',
+        'name': 'IndoorEnvironmentAug',
         'input': (1, 101, 2), #(channels, height, width)
         'output': ('classroom', 'corridor', 'lab', 'sports-complex'),
         'loader': indoor_environment_get_datasets,
