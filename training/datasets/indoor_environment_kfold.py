@@ -28,7 +28,7 @@ from torchvision import transforms
 
 import ai8x
 
-from .indoor_environment_aug import ToUnitInterval, CTFAugmentation
+from .indoor_environment import GlobalMinMaxNormalize
 
 
 def _compute_kfold_indices(num_items: int, k_folds: int, fold_index: int, seed: int):
@@ -219,19 +219,14 @@ class IndoorEnvironmentDataset(Dataset):
 def indoor_environment_kfold_get_datasets(data, load_train=True, load_test=True):
     """Load Indoor Environment CTF dataset with GroupKFold split.
 
-    Uses ai8x.normalize to match hardware dynamic range, same as the base dataset.
+    Uses GlobalMinMaxNormalize + ai8x.normalize to match hardware dynamic range.
+    No augmentations - uses same normalization as the base dataset.
     """
     (data_dir, args) = data
 
-    # Match augmentation strategy used in indoor_environment_aug.py
-    train_transform = transforms.Compose([
-        ToUnitInterval(),
-        CTFAugmentation(noise_std=0.005, freq_shift_range=2, apply_prob=0.5),
-        ai8x.normalize(args=args)
-    ])
-
-    test_transform = transforms.Compose([
-        ToUnitInterval(),
+    # Use global min-max normalization (no augmentations)
+    common_transform = transforms.Compose([
+        GlobalMinMaxNormalize(),
         ai8x.normalize(args=args)
     ])
 
@@ -239,7 +234,7 @@ def indoor_environment_kfold_get_datasets(data, load_train=True, load_test=True)
         train_dataset = IndoorEnvironmentDataset(
             root=data_dir,
             train=True,
-            transform=train_transform,
+            transform=common_transform,
             download=False
         )
     else:
@@ -249,7 +244,7 @@ def indoor_environment_kfold_get_datasets(data, load_train=True, load_test=True)
         test_dataset = IndoorEnvironmentDataset(
             root=data_dir,
             train=False,
-            transform=test_transform,
+            transform=common_transform,
             download=False
         )
     else:
