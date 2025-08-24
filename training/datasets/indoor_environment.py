@@ -28,13 +28,21 @@ import ai8x
 # ------------------------------------
 
 
-class ToUnitInterval:
-    """Scale a tensor to the [0, 1] interval using per-sample min-max."""
-
+class GlobalMinMaxNormalize:
+    """Scale a tensor to the [0, 1] interval using global dataset statistics.
+    
+    This preserves relative magnitude information between samples, unlike per-sample normalization.
+    Based on analysis: dataset range is approximately [-0.011066, 0.011379]
+    """
+    
+    def __init__(self, global_min=-0.011066, global_max=0.011379):
+        self.global_min = global_min
+        self.global_max = global_max
+        self.global_range = global_max - global_min
+    
     def __call__(self, tensor):
-        min_val = tensor.min()
-        max_val = tensor.max()
-        return (tensor - min_val) / (max_val - min_val)
+        return (tensor - self.global_min) / self.global_range
+
 
 
 class IndoorEnvironmentDataset(Dataset):
@@ -111,24 +119,27 @@ class IndoorEnvironmentDataset(Dataset):
         train_set = []
         test_set = []
         
-        # For each environment array
+        # For each array (representing a different environment)
         for array in [CTF_class, CTF_corridor, CTF_lab, CTF_SC]:
-            # Reshape to separate measurements for each grid point
+            # Reshape the array to separate the measurements for each grid point
             reshaped_array = array.reshape(num_grid_points, num_measurements, -1, 2)
             
             # Randomly select grid points for training
             train_points = random.sample(range(num_grid_points), num_train_points)
-            
+            #print(len(train_points))
+                
             # Get boolean array for test points
             test_points_bool = ~np.isin(range(num_grid_points), train_points)
             
-            # Add selected grid points to training set and rest to test set
+            # Add the selected grid points to the training set and the rest to the test set
             train_set.append(reshaped_array[train_points])
             test_set.append(reshaped_array[test_points_bool])
-        
-        # Concatenate data from all environments
-        train_set = np.concatenate(train_set, axis=0)  # (1164, 200, 101, 2)
-        test_set = np.concatenate(test_set, axis=0)    # (388, 200, 101, 2)
+            
+            # ~ is the logical NOT operator, so ~np.isin(shuffle_index, train_points) gives all the indices not in train_points.
+        # Concatenate the data from all environments
+        train_set = np.concatenate(train_set, axis=0)
+        test_set = np.concatenate(test_set, axis=0)
+
         
         # Reshape to final format
         large_X_train = train_set.reshape([-1, 101, 2])  # (232800, 101, 2)
@@ -140,6 +151,7 @@ class IndoorEnvironmentDataset(Dataset):
         label2 = np.ones([291 * 200]) * 1  # corridor  
         label3 = np.ones([291 * 200]) * 2  # lab
         label4 = np.ones([291 * 200]) * 3  # staircase
+
         large_Y_train = np.concatenate([label1, label2, label3, label4])
         
         # Test labels
@@ -147,25 +159,30 @@ class IndoorEnvironmentDataset(Dataset):
         label6 = np.ones([97 * 200]) * 1  # corridor
         label7 = np.ones([97 * 200]) * 2  # lab
         label8 = np.ones([97 * 200]) * 3  # staircase
+
         large_Y_test = np.concatenate([label5, label6, label7, label8])
         
         # Shuffle training data
-        shuffle_index1 = random.sample(range(0, 232800), 232800)
-        large_X_train_shuffled = large_X_train[shuffle_index1, :, :]
-        large_Y_train_shuffled = large_Y_train[shuffle_index1]
+        shuffle_index1 = random.sample(range(0,232800), 232800)
+        # large_X_train_shuffled = large_X_train[shuffle_index1, :, :]
+        large_X_train_new = large_X_train[shuffle_index1, :, :]
+        # large_Y_train_shuffled = large_Y_train[shuffle_index1]
+        large_Y_train = large_Y_train[shuffle_index1]
+
         
         # Shuffle test data
-        shuffle_index2 = random.sample(range(0, 77600), 77600)
-        large_X_test_shuffled = large_X_test[shuffle_index2, :, :]
-        large_Y_test_shuffled = large_Y_test[shuffle_index2]
+        shuffle_index2 = random.sample(range(0,77600), 77600)
+
+        large_X_test_new = large_X_test[shuffle_index2, :, :]
+        large_Y_test = large_Y_test[shuffle_index2]
         
         # Store appropriate split
         if self.train:
-            self.data = torch.tensor(large_X_train_shuffled, dtype=torch.float32)
-            self.targets = torch.tensor(large_Y_train_shuffled, dtype=torch.long)
+            self.data = torch.tensor(large_X_train_new, dtype=torch.float32)
+            self.targets = torch.tensor(large_Y_train, dtype=torch.long)
         else:
-            self.data = torch.tensor(large_X_test_shuffled, dtype=torch.float32)
-            self.targets = torch.tensor(large_Y_test_shuffled, dtype=torch.long)
+            self.data = torch.tensor(large_X_test_new, dtype=torch.float32)
+            self.targets = torch.tensor(large_Y_test, dtype=torch.long)
     
     def __len__(self):
         return len(self.data)
@@ -205,15 +222,13 @@ def indoor_environment_get_datasets(data, load_train=True, load_test=True):
     #   • floating-point [-128/128, +127/128] when args.act_mode_8bit == False
     #   • signed 8-bit integer [-128, +127]          when args.act_mode_8bit == True
     #
-    # Our raw CTF tensors are first converted to Torch tensors of dtype
-    # float32.  They already lie approximately in the [0, 1] interval after
-    # a per-sample min-max normalisation (see _load_data()).  Therefore we
-    # can directly attach ai8x.normalize() as the only transform.
+    # Our raw CTF tensors are converted to [0,1] range using global min-max
+    # normalization, then ai8x.normalize() maps to hardware range.
     # ------------------------------------------------------------------
 
-    # Per-sample min-max scale to [0,1]  → then map to int8 range
+    # Global min-max normalization preserves relative magnitudes between samples
     common_transform = transforms.Compose([
-        ToUnitInterval(),
+        GlobalMinMaxNormalize(),
         ai8x.normalize(args=args)
     ])
 
