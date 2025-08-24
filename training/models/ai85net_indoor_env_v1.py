@@ -72,24 +72,23 @@ class AI85IndoorEnvNetv1(nn.Module):
         
     def forward(self, x):  # pylint: disable=arguments-differ
         """Forward prop"""
-        # Reshape input from (batch, 101, 2) to (batch, 1, 101, 2)
+        # x: (B, 101, 2) → (B, 1, 101, 2)
         x = x.unsqueeze(1)
         
-        # First conv layer
+        # First conv layer: (B, 1, 101, 2) → (B, 5, 101, 2)
         x = self.conv1(x)
         
-        # Second conv layer
+        # Second conv layer: (B, 5, 101, 2) → (B, 5, 101, 2)
         x = self.conv2(x)
         
-        # Flatten
+        # Flatten: (B, 5, 101, 2) → (B, 1010)
         x = x.view(x.size(0), -1)
         
-        # First fully connected layer with ReLU
+        # First fully connected layer with ReLU: (B, 1010) → (B, 50)
         x = self.fc1(x)
         
-        # Final fully connected layer
+        # Final fully connected layer: (B, 50) → (B, 4)
         x = self.fc2(x)
-        
         return x
 
 
