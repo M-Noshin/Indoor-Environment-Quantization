@@ -1,7 +1,7 @@
 ---
 # Quantization-Aware Training (QAT) policy for the Indoor Environment CNN
 
-start_epoch: 10         # begin QAT after 8 epochs
+start_epoch: 8         # begin QAT after 8 epochs
 weight_bits: 8         # 8-bit weights
 shift_quantile: 0.95   # retain 0.1 % outliers
 outlier_removal_z_score: 2.0

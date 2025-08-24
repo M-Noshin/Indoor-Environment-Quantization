@@ -1,0 +1,16 @@
+# Phase 1: Exact custom learning rate schedule
+version: 1
+
+lr_schedulers:
+  custom_indoor_lr:
+    class: MultiStepMultiGammaLR
+    milestones: [3, 5]       # Reduce at epoch 3 and epoch 5  
+    gammas: [0.0005, 2.0]    # At epoch 3: lr *= 0.0005, at epoch 5: lr *= 2.0 (to reach 1e-6)
+
+policies:
+  - lr_scheduler:
+      instance_name: custom_indoor_lr
+    starting_epoch: 0
+    ending_epoch: 10
+    frequency: 1
+
