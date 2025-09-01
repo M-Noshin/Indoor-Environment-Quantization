@@ -17,6 +17,7 @@ import re
 from pathlib import Path
 import argparse
 import shutil
+import torch
 
 # Parse command line arguments
 def parse_args():
@@ -62,7 +63,6 @@ BASE_COMMAND = [
     "--dataset", "IndoorEnvironment_1D",
     "--data", "data/indoor_environment",
     "--compress", "policies/schedule-indoor-env.yaml",
-    # "--qat-policy", "policies/qat_policy_indoor.yaml",
     "--qat-policy", "None",
     "--device", "MAX78002",
     "--out-dir", OUTPUT_DIR
@@ -136,6 +136,21 @@ def format_with_precision(df, precision=4):
 print(f"\n{'='*80}")
 print(f"AI8X MULTI-SEED TRAINING CONFIGURATION")
 print(f"{'='*80}")
+try:
+    if torch.cuda.is_available():
+        num_gpus = torch.cuda.device_count()
+        names = ", ".join(torch.cuda.get_device_name(i) for i in range(num_gpus))
+        print(f"GPU available: yes ({num_gpus}) -> {names}")
+        # Select GPU 0 explicitly
+        try:
+            torch.cuda.set_device(0)
+            print(f"Using GPU 0: {torch.cuda.get_device_name(0)}")
+        except Exception as e:
+            print(f"Warning: failed to set CUDA device 0: {e}")
+    else:
+        print("GPU available: no (using CPU)")
+except Exception as e:
+    print(f"GPU check failed: {e}")
 print(f"Number of runs: {NUM_REPEATS}")
 print(f"Starting seed: {START_SEED}")
 print(f"Seed range: {START_SEED} to {START_SEED + NUM_REPEATS - 1}")
@@ -170,6 +185,9 @@ for run_idx, seed in enumerate(SEEDS):
         env = os.environ.copy()
         distiller_path = str(REPO_ROOT / "distiller")
         env['PYTHONPATH'] = f"{distiller_path}:{env.get('PYTHONPATH','')}"
+        # Ensure subprocesses also use GPU 0
+        if torch.cuda.is_available():
+            env['CUDA_VISIBLE_DEVICES'] = '0'
             
         # Run training with real-time output visible in terminal
         # Use tee to both display output and save to log file
