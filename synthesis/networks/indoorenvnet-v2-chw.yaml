@@ -1,0 +1,42 @@
+---
+# Indoor Environment CTF Classification Network (1D) for MAX78000/2
+# Author: Hamza
+
+arch: ai85indoorenvnetv2
+
+dataset: IndoorEnvironment_1D
+
+layers:
+  # Layer 0: Conv1d : (in_ch=2, out_ch=10) k=3, pad=1
+  - pad: 1
+    activate: ReLU
+    out_offset: 0x2000
+    processors: 0x0000000000000101
+    output_processors: 0x00000000000003FF
+    data_format: CHW   # channels, length; input expected (2, 101)
+    operation: conv1d
+    kernel_size: 3
+
+  # Layer 1: Conv1d : (in_ch=10, out_ch=10) k=3, pad=1
+  - pad: 1
+    activate: ReLU
+    out_offset: 0x0000
+    processors: 0x00000000000003FF
+    output_processors: 0x00000000000003FF
+    operation: conv1d
+    kernel_size: 3
+
+  # Layer 2: Flatten + FC1 : 10*101 -> 200
+  - flatten: true
+    out_offset: 0x2000
+    processors: 0x00000000000003FF
+    operation: MLP
+    output_width: 8
+    activate: ReLU
+
+  # Layer 3: FC2 : 200 -> 4 classes
+  - out_offset: 0x0000
+    processors: 0x000fffffffffffff
+    operation: MLP
+    output_width: 32
+    activate: None
