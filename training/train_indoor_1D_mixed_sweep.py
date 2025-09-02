@@ -223,7 +223,7 @@ def write_rolling_results(all_results, out_dir, results_filename, summary_filena
     df.to_csv(out_dir / results_filename, index=False)
     succ = df[df['status'] == 'success']
     if len(succ) > 0:
-        summary = succ.groupby(['config']).agg(
+        summary = succ.groupby(['input_length', 'config']).agg(
             runs=('test_accuracy', 'count'),
             mean_acc=('test_accuracy', 'mean'),
             std_acc=('test_accuracy', 'std'),
@@ -231,7 +231,7 @@ def write_rolling_results(all_results, out_dir, results_filename, summary_filena
         summary.sort_values(by='mean_acc', ascending=False, inplace=True)
         summary.to_csv(out_dir / summary_filename, index=False)
     else:
-        pd.DataFrame(columns=['config', 'runs', 'mean_acc', 'std_acc']).to_csv(
+        pd.DataFrame(columns=['input_length', 'config', 'runs', 'mean_acc', 'std_acc']).to_csv(
             out_dir / summary_filename, index=False
         )
 
