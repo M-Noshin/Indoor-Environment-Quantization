@@ -1,0 +1,26 @@
+---
+# QAT policy with per-layer weight bit overrides for AI85IndoorEnvNetv2 (1D)
+
+# When to start QAT
+start_epoch: 8
+
+# Default weight bits (used unless overridden per-layer below)
+weight_bits: 8
+
+# Activation threshold settings
+shift_quantile: 0.95
+outlier_removal_z_score: 2.0
+
+# Per-layer overrides (module names from model.named_modules())
+# Valid weight_bits: 1, 2, 4, 8
+overrides:
+  conv1:
+    weight_bits: 2
+  conv2:
+    weight_bits: 2
+  fc1:
+    weight_bits: 2
+  fc2:
+    weight_bits: 2
+
+

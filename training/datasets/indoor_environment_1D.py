@@ -37,6 +37,28 @@ class GlobalMinMaxNormalize:
         return (tensor - self.global_min) / self.global_range
 
 
+class Slice1DLength:
+    """Slice a [L, C] tensor to target length along the first dimension.
+    If target_length >= current length, returns input unchanged.
+    """
+    def __init__(self, target_length: int, mode: str = 'center'):
+        self.target_length = int(target_length)
+        self.mode = mode
+
+    def __call__(self, tensor: torch.Tensor) -> torch.Tensor:
+        if self.target_length is None:
+            return tensor
+        length = tensor.shape[0]
+        if self.target_length >= length:
+            return tensor
+        if self.mode == 'center':
+            start = max((length - self.target_length) // 2, 0)
+        else:
+            start = 0
+        end = start + self.target_length
+        return tensor[start:end, :]
+
+
 class IndoorEnvironmentDataset(Dataset):
     """
     Indoor Environment CTF Dataset
@@ -231,11 +253,14 @@ def indoor_environment_get_datasets(data, load_train=True, load_test=True):
     """
     (data_dir, args) = data
 
+    # Optional 1D length override via --input-1d-length
+    tfs = []
+    if hasattr(args, 'input_1d_length') and args.input_1d_length is not None:
+        if int(args.input_1d_length) > 0 and int(args.input_1d_length) < 101:
+            tfs.append(Slice1DLength(int(args.input_1d_length), mode='center'))
     # Map raw -> [0,1] (global min-max), then -> hw range via ai8x.normalize()
-    common_transform = transforms.Compose([
-        GlobalMinMaxNormalize(),
-        ai8x.normalize(args=args)
-    ])
+    tfs.extend([GlobalMinMaxNormalize(), ai8x.normalize(args=args)])
+    common_transform = transforms.Compose(tfs)
 
     train_dataset = IndoorEnvironmentDataset(
         root=data_dir, train=True,  transform=common_transform

@@ -3,8 +3,8 @@
 Indoor Environment Classification — ai8x Multi-Seed QAT Pipeline
 - For each seed:
   1) Train with QAT enabled
-  2) Quantize best checkpoint to INT8 (q8)
-  3) Evaluate the quantized checkpoint (-8 / HW simulation)
+  2) Quantize best checkpoint (names _q4/_q8/_qmixed based on weights)
+  3) Evaluate the quantized checkpoint (-8 simulates 8-bit activations)
   4) Record test accuracy/loss and runtime
 """
 
@@ -124,7 +124,7 @@ for idx, seed in enumerate(SEEDS, 1):
         "--dataset", "IndoorEnvironment_1D",
         "--data", "data/indoor_environment",
         "--compress", "policies/schedule-indoor-env.yaml",
-        "--qat-policy", "policies/qat_policy_indoor.yaml",
+        "--qat-policy", "policies/qat_policy_indoor_v2.yaml",
         "--device", "MAX78002",
         "--compiler-mode", "none",
         "--out-dir", str(OUTPUT_DIR),
@@ -138,7 +138,7 @@ for idx, seed in enumerate(SEEDS, 1):
         print(f"ERROR: QAT training failed for seed {seed} (code {e.returncode})")
         all_results.append({
             'run': idx, 'seed': seed,
-            'test_accuracy_q8': 0.0, 'status': 'train_failed'
+            'test_accuracy': 0.0, 'status': 'train_failed'
         })
         continue
 
@@ -147,7 +147,7 @@ for idx, seed in enumerate(SEEDS, 1):
     run_dirs = sorted(glob.glob(str(OUTPUT_DIR / f"{run_name}*")))
     if not run_dirs:
         print("WARNING: could not locate run directory for checkpoints")
-        all_results.append({'run': idx, 'seed': seed, 'test_accuracy_q8': 0.0, 'status': 'no_run_dir'})
+        all_results.append({'run': idx, 'seed': seed, 'test_accuracy': 0.0, 'status': 'no_run_dir'})
         continue
     run_dir = run_dirs[-1]
     best_qat = None
@@ -175,51 +175,81 @@ for idx, seed in enumerate(SEEDS, 1):
             pass
     if not best_qat:
         print("WARNING: best QAT checkpoint not found")
-        all_results.append({'run': idx, 'seed': seed, 'test_accuracy_q8': 0.0, 'status': 'no_best_qat'})
+        all_results.append({'run': idx, 'seed': seed, 'test_accuracy': 0.0, 'status': 'no_best_qat'})
         continue
 
-    # 2) Quantize to INT8 (q8)
-    q8_path = os.path.join(run_dir, Path(best_qat).stem + "_q8.pth.tar")
+    # 2) Quantize (detect effective weight precision from checkpoint to name output and logs)
     quant_log = LOGS_DIR / f"quant_run_{idx:02d}_seed_{seed}.log"
     # Ensure quantize.py path (sibling repo: ../ai8x-synthesis)
     QUANTIZE_PY = REPO_ROOT.parent / "ai8x-synthesis" / "quantize.py"
-    # Fix q8 naming to avoid double ".pth" in stem
+
+    # Determine weight bit setting from checkpoint (uniform -> INT{n}, mixed -> mixed)
+    weight_bits_label = "INT8"
+    suffix = "_q8"
+    try:
+        ckpt = torch.load(best_qat, map_location='cpu')
+        sd = ckpt.get('state_dict', {})
+        bits_found = set()
+        for k, v in sd.items():
+            if k.endswith('weight_bits'):
+                try:
+                    b = int(float(v.detach().cpu().numpy()))
+                except Exception:
+                    try:
+                        b = int(v)
+                    except Exception:
+                        continue
+                if b:
+                    bits_found.add(b)
+        if len(bits_found) == 1:
+            only = next(iter(bits_found))
+            weight_bits_label = f"INT{only}"
+            suffix = f"_q{only}"
+        elif len(bits_found) > 1:
+            weight_bits_label = "mixed"
+            suffix = "_qmixed"
+    except Exception:
+        pass
+
+    # Build output path (avoid double .pth in stem)
     if best_qat.endswith('.pth.tar'):
-        q8_path = best_qat[:-8] + '_q8.pth.tar'
+        quant_path = best_qat[:-8] + f'{suffix}.pth.tar'
+    else:
+        quant_path = os.path.join(run_dir, Path(best_qat).stem + f"{suffix}.pth.tar")
     quant_cmd = [
         "python", str(QUANTIZE_PY),
         best_qat,
-        q8_path,
+        quant_path,
         "--device", "MAX78002",
         "-v",
     ]
-    print(f"Quantizing best checkpoint to INT8...\n  best: {best_qat}\n  out : {q8_path}")
+    print(f"Quantizing best checkpoint (weights: {weight_bits_label})...\n  best: {best_qat}\n  out : {quant_path}")
     try:
         run_cmd_tee(quant_cmd, quant_log, REPO_ROOT, env)
     except subprocess.CalledProcessError as e:
         print(f"ERROR: quantize failed for seed {seed} (code {e.returncode})")
-        all_results.append({'run': idx, 'seed': seed, 'test_accuracy_q8': 0.0, 'status': 'quant_failed'})
+        all_results.append({'run': idx, 'seed': seed, 'test_accuracy': 0.0, 'status': 'quant_failed'})
         continue
 
     # 3) Evaluate quantized checkpoint (-8)
-    if not os.path.isfile(q8_path):
-        print(f"ERROR: q8 file not found after quantization: {q8_path}")
-        all_results.append({'run': idx, 'seed': seed, 'test_accuracy_q8': 0.0, 'status': 'q8_missing'})
+    if not os.path.isfile(quant_path):
+        print(f"ERROR: quantized file not found after quantization: {quant_path}")
+        all_results.append({'run': idx, 'seed': seed, 'test_accuracy': 0.0, 'status': 'quant_missing'})
         continue
     eval_log = LOGS_DIR / f"eval_run_{idx:02d}_seed_{seed}.log"
     eval_cmd = [
         "python", "train.py",
+        "--deterministic",
         "--optimizer", "Adam",
         "--model", "ai85indoorenvnetv2",
         "--dataset", "IndoorEnvironment_1D",
         "--data", "data/indoor_environment",
         "--device", "MAX78002",
-        "--qat-policy", "policies/qat_policy_indoor.yaml",
+        "--qat-policy", "policies/qat_policy_indoor_v2.yaml",
         "--use-bias",
-        "--deterministic",
         "--weight-decay", "0.0005",
         "--evaluate",
-        "--exp-load-weights-from", q8_path,
+        "--exp-load-weights-from", quant_path,
         "-8",
         "--confusion",
         "--print-freq", "10",
@@ -227,14 +257,14 @@ for idx, seed in enumerate(SEEDS, 1):
         "--compiler-mode", "none",
         "--out-dir", str(OUTPUT_DIR),
         "--seed", str(seed),
-        "--name", run_name + "_q8_eval",
+        "--name", run_name + f"_{weight_bits_label.lower()}_eval",
     ]
-    print(f"Evaluating INT8 checkpoint...\n  q8: {q8_path}")
+    print(f"Evaluating quantized checkpoint (weights: {weight_bits_label}, activations: INT8)...\n  file: {quant_path}")
     try:
         run_cmd_tee(eval_cmd, eval_log, REPO_ROOT, env)
     except subprocess.CalledProcessError as e:
         print(f"ERROR: evaluation failed for seed {seed} (code {e.returncode})")
-        all_results.append({'run': idx, 'seed': seed, 'test_accuracy_q8': 0.0, 'status': 'eval_failed'})
+        all_results.append({'run': idx, 'seed': seed, 'test_accuracy': 0.0, 'status': 'eval_failed'})
         continue
 
     # Extract test accuracy from eval log
@@ -252,44 +282,44 @@ for idx, seed in enumerate(SEEDS, 1):
     all_results.append({
         'run': idx,
         'seed': seed,
-        'test_accuracy_q8': test_acc or 0.0,
+        'test_accuracy': test_acc or 0.0,
         'training_time_seconds': training_time,
         'status': 'success' if test_acc is not None else 'no_metric'
     })
 
-    # Copy q8 checkpoint to central dir with seed-prefixed name
+    # Copy quantized checkpoint to central dir with seed-prefixed name
     try:
-        dest = CHECKPOINTS_DIR / f"{run_name}_{Path(q8_path).name}"
-        shutil.copy2(q8_path, dest)
-        print(f"Archived q8 checkpoint: {dest}")
+        dest = CHECKPOINTS_DIR / f"{run_name}_{Path(quant_path).name}"
+        shutil.copy2(quant_path, dest)
+        print(f"Archived quantized checkpoint: {dest}")
     except Exception as e:
         print(f"WARNING: failed to archive q8 checkpoint: {e}")
 
     # Save rolling results
     df = pd.DataFrame(all_results)
     df.to_csv(OUTPUT_DIR / "all_runs_results_qat.csv", index=False)
-    print(f"Completed run {idx}/{NUM_REPEATS} (seed={seed}), q8 Test Acc: {test_acc}")
+    print(f"Completed run {idx}/{NUM_REPEATS} (seed={seed}), Test Acc ({weight_bits_label}): {test_acc}")
 
 
 # Summary
 print("\n" + "=" * 80)
-print("AGGREGATE RESULTS (QAT q8)")
+print("AGGREGATE RESULTS (QAT quantized)")
 print("=" * 80)
 df = pd.DataFrame(all_results)
 df.to_csv(OUTPUT_DIR / "all_runs_results_qat.csv", index=False)
 succ = df[df['status'] == 'success']
 if len(succ) > 0:
-    mean_acc = succ['test_accuracy_q8'].mean()
-    std_acc = succ['test_accuracy_q8'].std()
+    mean_acc = succ['test_accuracy'].mean()
+    std_acc = succ['test_accuracy'].std()
     print(f"SUCCESSFUL RUNS: {len(succ)}/{len(df)}")
-    print(f"Mean q8 Test Acc: {mean_acc:.2f}% ± {std_acc:.2f}%")
+    print(f"Mean Test Acc: {mean_acc:.2f}% ± {std_acc:.2f}%")
 else:
     print("ERROR: No successful runs!")
 
 print(f"\nResults saved to {OUTPUT_DIR}/")
 print("Files created:")
-print("- all_runs_results_qat.csv: CSV of q8 results")
+print("- all_runs_results_qat.csv: CSV of quantized results")
 print("- logs/: Train/Quant/Eval logs per run")
-print("- checkpoints/: q8 checkpoints (archived)")
+print("- checkpoints/: quantized checkpoints (archived)")
 
 

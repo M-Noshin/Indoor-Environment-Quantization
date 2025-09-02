@@ -318,6 +318,14 @@ def main():
        or ('regression' in selected_source and selected_source['regression']):
         args.regression = True
     dimensions = selected_source['input']
+    # Allow overriding 1D input length (channels, length) via --input-1d-length
+    if hasattr(args, 'input_1d_length') and args.input_1d_length is not None:
+        if len(dimensions) == 2:
+            # dimensions format: (channels, length) for 1D
+            dimensions = (dimensions[0], args.input_1d_length)
+        elif len(dimensions) == 3 and dimensions[2] == 1:
+            # (channels, length, 1)
+            dimensions = (dimensions[0], args.input_1d_length, dimensions[2])
     if len(dimensions) == 2:
         dimensions += (1, )
     args.dimensions = dimensions
