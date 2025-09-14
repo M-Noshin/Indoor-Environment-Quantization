@@ -174,9 +174,9 @@ int main(void)
   {
     double mean = (double)sum_inf_us / (double)NUM_RUNS;
     double std = sqrt(sum_sq / (double)NUM_RUNS - mean * mean);
-    printf("Inference total time: %llu us (avg %.3f us/run)\n",
+    printf("Inference total time: %llu us (avg %.4f us/run)\n",
            (unsigned long long)sum_inf_us, mean);
-    printf("\nLatency over %d runs:\n  Mean: %.3f us\n  Std-dev: %.3f us\n  Last: %.3f us\n",
+    printf("\nLatency over %d runs:\n  Mean: %.4f us\n  Std-dev: %.4f us\n  Last: %.3f us\n",
            NUM_RUNS, mean, std, (double)t_us[NUM_RUNS - 1]);
   }
 
