@@ -6,7 +6,7 @@
 **************************************************************************************************/
 
 /*
- * This header file was automatically @generated for the indoor_env_1d_101 network from a template.
+ * This header file was automatically @generated for the indoor_env_1d_91_q8824 network from a template.
  * Please do not edit; instead, edit the template and regenerate.
  */
 
@@ -23,29 +23,26 @@ typedef int16_t q15_t;
 
 /*
   SUMMARY OF OPS
-  Hardware: 241,380 ops (239,160 macc; 2,220 comp; 0 add; 0 mul; 0 bitwise)
-    Layer 0: 7,070 ops (6,060 macc; 1,010 comp; 0 add; 0 mul; 0 bitwise)
-    Layer 1: 31,310 ops (30,300 macc; 1,010 comp; 0 add; 0 mul; 0 bitwise)
-    Layer 2: 202,200 ops (202,000 macc; 200 comp; 0 add; 0 mul; 0 bitwise)
+  Hardware: 217,580 ops (215,560 macc; 2,020 comp; 0 add; 0 mul; 0 bitwise)
+    Layer 0: 6,370 ops (5,460 macc; 910 comp; 0 add; 0 mul; 0 bitwise)
+    Layer 1: 28,210 ops (27,300 macc; 910 comp; 0 add; 0 mul; 0 bitwise)
+    Layer 2: 182,200 ops (182,000 macc; 200 comp; 0 add; 0 mul; 0 bitwise)
     Layer 3: 800 ops (800 macc; 0 comp; 0 add; 0 mul; 0 bitwise)
 
   RESOURCE USAGE
-  Weight memory: 203,160 bytes out of 2,396,160 bytes total (8.5%)
+  Weight memory: 46,260 bytes out of 2,396,160 bytes total (1.9%)
   Bias memory:   224 bytes out of 8,192 bytes total (2.7%)
 */
 
 /* Number of outputs for this network */
 #define CNN_NUM_OUTPUTS 4
 
-/* Use this timer to time the inference */
-#define CNN_INFERENCE_TIMER MXC_TMR0
-
 /* Port pin actions used to signal that processing is active */
-
-#define CNN_START LED_On(1)
-#define CNN_COMPLETE LED_Off(1)
-#define SYS_START LED_On(0)
-#define SYS_COMPLETE LED_Off(0)
+extern mxc_gpio_cfg_t gpio_trig1, gpio_trig2;
+#define CNN_START MXC_GPIO_OutSet(gpio_trig2.port, gpio_trig2.mask)
+#define CNN_COMPLETE MXC_GPIO_OutClr(gpio_trig2.port, gpio_trig2.mask)
+#define SYS_START MXC_GPIO_OutSet(gpio_trig1.port, gpio_trig1.mask)
+#define SYS_COMPLETE MXC_GPIO_OutClr(gpio_trig1.port, gpio_trig1.mask)
 
 /* Run software SoftMax on unloaded data */
 void softmax_q17p14_q15(const q31_t * vec_in, const uint16_t dim_vec, q15_t * p_out);

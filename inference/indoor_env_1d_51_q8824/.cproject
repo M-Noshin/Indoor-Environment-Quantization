@@ -62,12 +62,12 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="indoor_env_1d_101.null.923778415" name="indoor_env_1d_101"/>
+		<project id="indoor_env_1d_51_q8824.null.923778415" name="indoor_env_1d_51_q8824"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Default">
-			<resource resourceType="PROJECT" workspacePath="/indoor_env_1d_101"/>
+			<resource resourceType="PROJECT" workspacePath="/indoor_env_1d_51_q8824"/>
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
