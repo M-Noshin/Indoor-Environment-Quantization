@@ -116,5 +116,15 @@ This will generate `indoor_run_qat_best.pth_q8.tar`, the INT8 quantized model in
 
 This evaluates the quantized model (prepared for MAX78000 deployment).
 
+## Citation & Reaching out
+If you use our work for your own research, please cite us with the below: 
+
+```bibtex
+
+```
+
+You can also reach out through email to: 
+- Hamza Abushahla - b00090279@alumni.aus.edu
+- Dr. Mohamed AlHajri - mialhajri@aus.edu
 
 
