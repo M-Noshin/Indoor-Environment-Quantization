@@ -2,7 +2,7 @@
 
 _Muhammed Noshin, Hamza A. Abushahla, and Dr. Mohamed I. AlHajri_
 
-This repository contains code and resources for the paper: [Title Here](https://ieeexplore.ieee.org/document/11048877).
+This repository contains code and resources for the paper: [Sub-Millisecond, Microjoule Edge Inference for Indoor Environment Classification via Layer-Wise Mixed-Precision Quantization](https://ieeexplore.ieee.org/document/11048877).
 
 ## 📌 Overview
 This work presents...
