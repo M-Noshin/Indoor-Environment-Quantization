@@ -4,6 +4,11 @@ _Muhammed Noshin, Hamza A. Abushahla, and Dr. Mohamed I. AlHajri_
 
 This repository contains code and resources for the paper: [Sub-Millisecond, Microjoule Edge Inference for Indoor Environment Classification via Layer-Wise Mixed-Precision Quantization](https://ieeexplore.ieee.org/document/11048877).
 
+<div align="center">
+  <img src="figs/Indoor" height="350px" alt="E2E" />
+</div>
+<p align="center"><em>Figure 1: System overview of the proposed indoor environment identification framework. The pipeline illustrates the complete workflow, including data preprocessing, model training and quantization, and deployment on the MAX78002.</em></p>
+
 ## 📌 Overview
 This work presents...
 
