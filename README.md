@@ -46,7 +46,7 @@ The main contributions of this work are summarized as follows:
 Clone and install the official repository:
 
 ```bash
-git clone https://github.com/MaximIntegratedAI/ai8x-training.git
+git clone --recursive https://github.com/analogdevicesinc/ai8x-training.git
 cd ai8x-training
 # Follow their installation steps (e.g., conda environment, requirements)
 ```
