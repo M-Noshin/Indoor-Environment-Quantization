@@ -33,7 +33,7 @@ WEIGHT_DECAY=0.0005
 DEVICE="MAX78002"
 DATA_DIR="data/indoor_environment"
 OUT_DIR="ptq_mixed_sweep_output"
-CALIB_SPLIT="trainval"  # train | trainval
+CALIB_SPLIT="train"  # train | trainval
 
 # Define configs to sweep (add/remove as needed)
 # Format: "conv1_bits conv2_bits fc1_bits fc2_bits"

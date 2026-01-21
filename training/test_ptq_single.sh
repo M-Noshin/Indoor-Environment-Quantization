@@ -40,7 +40,7 @@ CONFIG_NAME="INT_${CONV1_BITS}-${CONV2_BITS}-${FC1_BITS}-${FC2_BITS}"
 # - calibration split: 'trainval' provides better coverage for activation statistics
 # - clipping method: Leave empty to use MAX_BIT_SHIFT (default), which works with calibrated thresholds
 #   NOTE: --clip-method SCALE overrides calibrated thresholds and performs worse!
-CALIB_SPLIT="${CALIB_SPLIT:-trainval}"         # train | trainval
+CALIB_SPLIT="${CALIB_SPLIT:-train}"         # train | trainval
 PTQ_CLIP_METHOD="${PTQ_CLIP_METHOD:-}"         # Leave empty for MAX_BIT_SHIFT (default, works best with calibration)
 PTQ_SCALE="${PTQ_SCALE:-1.0}"                  # only used when PTQ_CLIP_METHOD=SCALE
 
