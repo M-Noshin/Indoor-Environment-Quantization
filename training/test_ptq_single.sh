@@ -30,10 +30,10 @@ OUT_DIR="ptq_test_output"
 RUN_NAME="indoor_ptq_test_seed_${SEED}_L${INPUT_LENGTH}"
 
 # Mixed precision config to test
-CONV1_BITS=8
-CONV2_BITS=8
-FC1_BITS=8
-FC2_BITS=8
+CONV1_BITS=4
+CONV2_BITS=4
+FC1_BITS=4
+FC2_BITS=4
 CONFIG_NAME="INT_${CONV1_BITS}-${CONV2_BITS}-${FC1_BITS}-${FC2_BITS}"
 
 # PTQ knobs:
@@ -47,12 +47,32 @@ PTQ_SCALE="${PTQ_SCALE:-1.0}"                  # only used when PTQ_CLIP_METHOD=
 echo "========================================"
 echo "Pure PTQ Test - ${CONFIG_NAME}"
 echo "Input Length: ${INPUT_LENGTH}, Seed: ${SEED}"
+echo "Conv1: ${CONV1_BITS}-bit, Conv2: ${CONV2_BITS}-bit, FC1: ${FC1_BITS}-bit, FC2: ${FC2_BITS}-bit"
 echo "========================================"
-echo "Flow: Train (no QAT) → Calibrate → Quantize → Evaluate"
-echo ""
 
-# Create output directory
-mkdir -p ${OUT_DIR}
+# Create QAT policy for mixed-precision quantization
+QAT_POLICY_FILE="${OUT_DIR}/qat_policy_${CONFIG_NAME}.yaml"
+mkdir -p "${OUT_DIR}"
+cat > "${QAT_POLICY_FILE}" <<EOF
+---
+start_epoch: 0
+weight_bits: 8
+outlier_removal_z_score: 2.0
+overrides:
+  conv1:
+    weight_bits: ${CONV1_BITS}
+  conv2:
+    weight_bits: ${CONV2_BITS}
+  fc1:
+    weight_bits: ${FC1_BITS}
+  fc2:
+    weight_bits: ${FC2_BITS}
+EOF
+echo "Created QAT policy: ${QAT_POLICY_FILE}"
+cat "${QAT_POLICY_FILE}"
+echo ""
+echo "Flow: Train (no QAT) → Calibrate (with policy) → Quantize (reads bits from checkpoint) → Evaluate"
+echo ""
 
 # Step 1: Train WITHOUT QAT
 echo "Step 1/4: Training (no QAT)..."
@@ -120,6 +140,7 @@ python calibrate_ptq_simple.py \
   --batch-size ${BATCH_SIZE} \
   --z-score 2.0 \
   --calib-split ${CALIB_SPLIT} \
+  --qat-policy ${QAT_POLICY_FILE} \
   2>&1 | tee ${RUN_DIR}/calibrate_${RUN_NAME}.log
 
 if [ ! -f "${CALIBRATED_CKPT}" ]; then
@@ -163,15 +184,8 @@ echo "Quantized checkpoint: ${QUANT_CKPT}"
 echo ""
 echo "Step 4/4: Evaluating quantized model..."
 
-# Create dummy QAT policy (needed to signal BN is fused)
-# Match the z-score used during calibration for consistency
-DUMMY_QAT_POLICY="${OUT_DIR}/dummy_qat_policy.yaml"
-cat > ${DUMMY_QAT_POLICY} <<EOF
----
-start_epoch: 0
-weight_bits: 8
-outlier_removal_z_score: 2.0
-EOF
+# Use the same QAT policy for evaluation (signals BN is fused + mixed-precision bits)
+# (We already created this at the start of the script)
 
 python train.py \
   --deterministic \
@@ -181,7 +195,7 @@ python train.py \
   --data ${DATA_DIR} \
   --input-1d-length ${INPUT_LENGTH} \
   --device ${DEVICE} \
-  --qat-policy ${DUMMY_QAT_POLICY} \
+  --qat-policy ${QAT_POLICY_FILE} \
   --use-bias \
   --weight-decay ${WEIGHT_DECAY} \
   --evaluate \

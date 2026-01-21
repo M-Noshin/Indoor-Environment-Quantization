@@ -5,6 +5,7 @@ Replicates ai8x.pre_qat() for pure PTQ (no QAT training)
 """
 import argparse
 import torch
+import yaml
 import ai8x
 
 def main():
@@ -33,7 +34,27 @@ def main():
                              'contains train+val internally; choose "train" to exclude val '
                              '(apples-to-apples with QAT), or "trainval" to include val '
                              '(often improves PTQ calibration stability).')
+    parser.add_argument('--qat-policy', type=str, default=None,
+                        help='YAML file with QAT policy for mixed-precision quantization. '
+                             'If not provided, defaults to INT8 (8-bit) for all layers.')
     args = parser.parse_args()
+
+    # Load QAT policy if provided (for mixed-precision)
+    if args.qat_policy:
+        print(f"Loading QAT policy from: {args.qat_policy}")
+        with open(args.qat_policy, 'r') as f:
+            qat_policy_config = yaml.safe_load(f)
+        print(f"  Using weight_bits={qat_policy_config.get('weight_bits', 8)}, "
+              f"z-score={qat_policy_config.get('outlier_removal_z_score', args.z_score)}")
+        if 'overrides' in qat_policy_config:
+            print(f"  Layer overrides: {list(qat_policy_config['overrides'].keys())}")
+    else:
+        # Default: INT8 for all layers
+        print("No QAT policy provided, using INT8 (8-bit) for all layers")
+        qat_policy_config = {
+            'weight_bits': 8,
+            'outlier_removal_z_score': args.z_score
+        }
 
     # Configure device
     device_dict = {'MAX78000': 85, 'MAX78002': 87}
@@ -147,26 +168,18 @@ def main():
     # Step 2: Calibrate via pre_qat (train.py:624)
     # This calls: init_hist -> stat_collect -> init_threshold -> release_hist -> apply_scales
     print("Collecting statistics (pre_qat: init_hist, stat_collect, init_threshold, apply_scales)...")
+    # For pre_qat, only need weight_bits and outlier_removal_z_score (overrides applied later)
     qat_policy_for_calib = {
-        'weight_bits': 8,
-        'outlier_removal_z_score': args.z_score
+        'weight_bits': qat_policy_config.get('weight_bits', 8),
+        'outlier_removal_z_score': qat_policy_config.get('outlier_removal_z_score', args.z_score)
     }
     ai8x.pre_qat(model, train_loader, calib_args, qat_policy_for_calib)
     
     # Step 3: Initialize QAT (train.py:638)
     # This sets quantize_activation=True, adjust_output_shift=True, etc.
+    # Now include overrides for per-layer bit configuration
     print("Initializing quantization...")
-    qat_policy = {
-        'weight_bits': 8,
-        'outlier_removal_z_score': args.z_score,
-        'overrides': {
-            'conv1': {'weight_bits': 8},
-            'conv2': {'weight_bits': 8},
-            'fc1': {'weight_bits': 8},
-            'fc2': {'weight_bits': 8}
-        }
-    }
-    ai8x.initiate_qat(model, qat_policy)
+    ai8x.initiate_qat(model, qat_policy_config)
     
     print("✓ Calibration complete (activation_threshold and final_scale set by pre_qat)!")
     
