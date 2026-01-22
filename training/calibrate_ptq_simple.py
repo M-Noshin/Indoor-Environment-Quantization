@@ -28,7 +28,7 @@ def main():
                         help='Model architecture (if different from checkpoint)')
     parser.add_argument('--input-1d-length', type=int, default=101,
                         help='Input 1D length')
-    parser.add_argument('--calib-split', type=str, default='trainval',
+    parser.add_argument('--calib-split', type=str, default='train',
                         choices=['train', 'trainval'],
                         help='Calibration data to use. IndoorEnvironment_1D "train" dataset '
                              'contains train+val internally; choose "train" to exclude val '
@@ -37,6 +37,11 @@ def main():
     parser.add_argument('--qat-policy', type=str, default=None,
                         help='YAML file with QAT policy for mixed-precision quantization. '
                              'If not provided, defaults to INT8 (8-bit) for all layers.')
+    parser.add_argument('--calib-seed', type=int, default=12345,
+                        help='Random seed for calibration data shuffling (default: 12345). '
+                             'Using a fixed seed ensures deterministic calibration.')
+    parser.add_argument('--no-shuffle', action='store_true',
+                        help='Disable shuffling of calibration data (fully deterministic, but may affect quality)')
     args = parser.parse_args()
 
     # Load QAT policy if provided (for mixed-precision)
@@ -150,13 +155,33 @@ def main():
             from torch.utils.data import Subset
             train_dataset = Subset(train_dataset, list(range(train_len)))
     
-    train_loader = torch.utils.data.DataLoader(
-        train_dataset,
-        batch_size=args.batch_size,
-        shuffle=True,
-        num_workers=0,
-        pin_memory=False
-    )
+    # Set deterministic seed for calibration data loader
+    # CRITICAL: Without this, calibration is non-deterministic and results vary wildly!
+    import numpy as np
+    import random
+    torch.manual_seed(args.calib_seed)
+    np.random.seed(args.calib_seed)
+    random.seed(args.calib_seed)
+    
+    # Create data loader with deterministic shuffling
+    shuffle = not args.no_shuffle
+    loader_kwargs = {
+        'batch_size': args.batch_size,
+        'shuffle': shuffle,
+        'num_workers': 0,
+        'pin_memory': False
+    }
+    
+    if shuffle:
+        # Use seeded generator for reproducible shuffling
+        g = torch.Generator()
+        g.manual_seed(args.calib_seed)
+        loader_kwargs['generator'] = g
+        print(f"Using shuffled calibration data (seed={args.calib_seed} for reproducibility)")
+    else:
+        print("Using non-shuffled calibration data (fully deterministic)")
+    
+    train_loader = torch.utils.data.DataLoader(train_dataset, **loader_kwargs)
 
     # === PTQ Calibration (EXACT same order as QAT in train.py:615-638) ===
     print(f"Calibrating with z-score={args.z_score}...")
