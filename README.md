@@ -89,7 +89,7 @@ conda create -n max python=3.11 -y
 conda activate max
 
 python -m pip install --upgrade pip
-pip install -r envs/requirements.txt
+pip install -r requirements.txt
 ```
 
 ---
