@@ -30,91 +30,282 @@ The main contributions of this work are summarized as follows:
 
 [^1]: https://ieeexplore.ieee.org/abstract/document/11021689
 
+---
+
 ## 📁 Repository Structure
 
-* `training/`
-  Files related to [ai8x-training](https://github.com/MaximIntegratedAI/ai8x-training), including the dataset, dataloader, model, training, and quantization scripts.
+This repository is organized as **overlays** on top of the official Analog Devices ai8x toolchain:
 
-* `synthesis/`
-  Files related to [ai8x-synthesis](https://github.com/MaximIntegratedAI/ai8x-synthesis), including model synthesis and deployment on hardware (e.g., MAX78002 configuration YAMLs).
+- `envs/`
+  - `max_linux.yml` / `max_mac.yml`: recommended conda environments for reproducibility
+  - `requirements.txt`: fallback pip requirements (Python 3.11)
 
+- `training/`
+  Overlay files for `ai8x-training`:
+  - dataset (`data/`)
+  - dataloader (`datasets/`)
+  - model definitions (`models/`)
+  - training policies (LR schedule + QAT/MPQ policies) (`policies/`)
+  - scripts and sweep drivers (`scripts/`, `sweeps/`)
 
-## 📦 Getting Started
+- `synthesis/`
+  Overlay files for `ai8x-synthesis`:
+  - izer configs / network YAMLs
+  - generation scripts for hardware projects
 
-### 1️⃣ Install `ai8x-training`
+- `inference/`
+  Example exported projects and ready-to-run MAX78002 deployments:
+  - generated izer project folders (e.g., `indoor_env_1d_51_q8824/`)
+  - example quantized checkpoints (when applicable)
 
-Clone and install the official repository:
+- `figs/`
+  Figures used in this repo/README
+
+---
+
+## 1) Environment Setup
+
+### Option A (Recommended): Conda environment
+From the repo root:
+```bash
+conda env create -f envs/max_linux.yml
+# or
+conda env create -f envs/max_mac.yml
+
+conda activate max
+````
+
+### Option B: Pip environment (fallback)
 
 ```bash
+python3.11 -m venv .venv
+source .venv/bin/activate
+pip install -r envs/requirements.txt
+```
+
+---
+
+## 2) Create a Working Directory (ai8x root)
+
+We recommend a single workspace that contains both toolchains:
+
+```bash
+mkdir max_workdir && cd max_workdir
 git clone --recursive https://github.com/analogdevicesinc/ai8x-training.git
-cd ai8x-training
-# Follow their installation steps (e.g., conda environment, requirements)
+git clone --recursive https://github.com/analogdevicesinc/ai8x-synthesis.git
+```
+
+Expected layout:
+
+```text
+max_workdir/
+├── ai8x-training/
+└── ai8x-synthesis/
 ```
 
 ---
 
-### 2️⃣ Copy project files
+## 3) Copy This Repo’s Overlay Files Into ai8x
 
-Copy the contents of this repo’s `training/` folder into the corresponding folders of your local `ai8x-training` installation:
+### 3.1 ai8x-training overlay
 
-| Target folder (inside `ai8x-training/`) | Copy from (`training/` in this repo)                                                     | Purpose                                    |
-| --------------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------ |
-| `./data/`                               | `training/data/indoor_environment/` (contains 8 `.mat` files)                            | Dataset                                    |
-| `./datasets/`                           | `training/datasets/indoor_environment.py`                                                | Dataloader script                          |
-| `./models/`                             | `training/models/ai85net_indoor_env_v1.py`                                               | Indoor-environment model using ai8x layers |
-| `./policies/`                           | `training/policies/schedule-indoor-env.yaml`, `training/policies/qat_policy_indoor.yaml` | LR schedule & QAT config                   |
-| `./scripts/`                            | `training/scripts/train_indoor.sh`, `training/scripts/evaluate_indoor.sh`                | Training & evaluation scripts              |
+Copy the contents of this repo’s `training/` into your local `ai8x-training/` (merge folders; do not nest).
+
+Example mapping (will expand as repo evolves):
+
+| Target folder (inside `ai8x-training/`) | Copy from (this repo)                   | Purpose                        |
+| --------------------------------------- | --------------------------------------- | ------------------------------ |
+| `data/`                                 | `training/data/indoor_environment/`     | Dataset (.mat files)           |
+| `datasets/`                             | `training/datasets/`                    | Dataloader(s)                  |
+| `models/`                               | `training/models/`                      | ai8x model(s)                  |
+| `policies/`                             | `training/policies/`                    | LR schedule + QAT/MPQ policies |
+| `scripts/` / `sweeps/`                  | `training/scripts/`, `training/sweeps/` | training/eval + sweep drivers  |
+
+### 3.2 ai8x-synthesis overlay
+
+Similarly, merge this repo’s `synthesis/` into your local `ai8x-synthesis/`.
 
 ---
 
-### 3️⃣ Run training & evaluation
+## 4) Simulation Pipeline (Training → Quantization → Evaluation)
 
-From inside the `ai8x-training` directory:
+All commands below assume you are inside:
 
 ```bash
-# Training
-sh scripts/train_indoor.sh
+cd max_workdir/ai8x-training
 ```
 
-Edit `train_indoor.sh` to adjust epochs, batch size, etc.
+### 4.1 Single-run training (QAT optional)
 
-This will run the training + initiate QAT at the epoch in the policy file (e.g., epoch 8) and will save the best model in a checkpoint in the corresponding logs folder. 
-The logs folder will contain `checkpoint.pth.tar` and `best.pth.tar`, these are the floating point models, and `qat_checkpoint.pth.tar` and `qat_best.pth.tar` are the models from QAT. Note these models are not quantized yet. 
+**QAT-enabled run:**
+
+```bash
+python train.py --epochs 10 --batch-size 256 \
+  --optimizer Adam --lr 0.001 --weight-decay 0.0005 \
+  --use-bias --deterministic \
+  --model ai85indoorenvnetv2 --dataset IndoorEnvironment_1D --data data/indoor_environment \
+  --compress policies/schedule-indoor-env.yaml \
+  --qat-policy policies/qat_policy_indoor_v2.yaml \
+  --input-1d-length 101 \
+  --device MAX78002 --name indoor_run
+```
+
+**PTQ-only (no QAT):**
+Set `--qat-policy` to `None` (or remove it, depending on your local script conventions).
+
+**Outputs (logs directory):**
+
+* `checkpoint.pth.tar`, `best.pth.tar`: float checkpoints
+* `qat_checkpoint.pth.tar`, `qat_best.pth.tar`: checkpoints after QAT starts
+  Note: these are not yet “izer-ready” until quantization/export steps are run by the provided scripts.
+
+**MPQ configuration:**
+Layer-wise bitwidths are controlled in the relevant QAT policy YAML (e.g., `qat_policy_indoor_v2.yaml`).
 
 ---
 
-## ⚙️ Quantization
+## 5) Automated Sweeps Used in the Paper
 
-1️⃣ **Clone and install [ai8x-synthesis](https://github.com/MaximIntegratedAI/ai8x-synthesis)**
+### 5.1 QAT Mixed-Precision Sweep
 
-Make sure you have both `ai8x-training` and `ai8x-synthesis` in the same root folder.
+Script: `train_indoor_1D_mixed_sweep.py`
 
-2️⃣ **Run quantization:**
+What it does:
 
-Assuming training saved a checkpoint, e.g., `logs/indoor_run___2025.07.11-174158/indoor_run_qat_best.pth.tar`:
+* Enumerates **all 891 MPQ configs** (3^4 over {8,4,2} bits for conv1/conv2/fc1/fc2)
+* Sweeps **multiple input lengths (α)** and **multiple seeds**
+* Runs **full QAT**, then quantizes and evaluates each run
+* Writes detailed and aggregated CSV summaries
+
+Run:
 
 ```bash
-python ai8x-synthesis/quantize.py \
-  ai8x-training/logs/indoor_run___2025.07.11-174158/indoor_run_qat_best.pth.tar \
-  ai8x-training/logs/indoor_run___2025.07.11-174158/indoor_run_qat_best.pth_q8.tar \
-  --device MAX78000
+python train_indoor_1D_mixed_sweep.py
 ```
 
-This will generate `indoor_run_qat_best.pth_q8.tar`, the INT8 quantized model in this case.
+Default output folder (example):
+
+```text
+ai8x_seed_runs_out/
+├── logs_mixed/
+├── checkpoints_mixed/
+├── policies/sweep/
+├── mixed_precision_sweep_results.csv
+└── mixed_precision_sweep_summary.csv
+```
+
+### 5.2 PTQ Mixed-Precision Sweep
+
+Script: `train_indoor_1D_mixed_sweep_ptq.py`
+
+Run (example):
+
+```bash
+python -u train_indoor_1D_mixed_sweep_ptq.py \
+  --num-seeds 5 \
+  --start-seed 42 \
+  --input-lengths 101 \
+  --epochs 10 \
+  --z-score 2.0 \
+  --calib-split train
+```
+
+Outputs (example):
+
+```text
+ai8x_ptq_sweep_out/
+├── ptq_sweep_results.csv
+├── ptq_sweep_summary.csv
+├── logs_ptq/
+└── checkpoints_ptq/
+```
 
 ---
 
-## ✅ Evaluation
+## 6) Hardware Evaluation (Quantized Checkpoint → Synthesis → MAX78002 Deployment)
 
-1️⃣ Edit `scripts/evaluate_indoor.sh` to point to the quantized model.
+### 6.1 Quantized checkpoint naming
 
-2️⃣ Run evaluation:
+Quantized checkpoints follow:
 
-```bash
-(ai8x-training) $ sh scripts/evaluate_indoor.sh
+* Uniform: `_q8.pth.tar`, `_q4.pth.tar`, `_q2.pth.tar`
+* Mixed precision: `_qmixed.pth.tar`
+
+Example:
+
+```text
+indoor_mixed_seed_46__L101__8_8_8_8_*_qat_best_q8.pth.tar
 ```
 
-This evaluates the quantized model (prepared for MAX78000 deployment).
+### 6.2 Synthesis (ai8x-synthesis / ai8xize)
+
+Go to:
+
+```bash
+cd ../ai8x-synthesis
+```
+
+Edit the generation script (example):
+
+* `scripts/gen_indoor_1d.sh`
+
+Set:
+
+* `LENGTH=101`
+* `CONFIG="8-8-8-8"` (or any MPQ config like `8-8-2-4`)
+* `CHECKPOINT=<path-to-quantized-checkpoint>`
+
+The script calls `ai8xize.py` to generate a deployable C project, e.g.:
+
+```bash
+python ai8xize.py \
+  --test-dir "$TARGET" \
+  --prefix "$PREFIX" \
+  --checkpoint-file "$CHECKPOINT" \
+  --config-file networks/indoorenvnet-v2-chw-${LENGTH}.yaml \
+  --sample-input tests/sample_indoorenvironment_1d_${LENGTH}.npy \
+  --overwrite --softmax --compact-data --mexpress --max-speed --energy
+```
+
+### 6.3 Generated project output
+
+A C/C++ project folder will be created (example):
+
+```text
+HW_Evaluation/indoor_env_1d_101_q8888/
+```
+
+This includes:
+
+* `main.c` (entry point)
+* `cnn.c`, `cnn.h` (generated network)
+* Makefile / Eclipse launch files (depending on izer output)
+
+### 6.4 Flash/run on MAX78002 (MSDK + Eclipse)
+
+Import the generated project into Eclipse after setting up the Analog Devices MSDK:
+
+* [https://github.com/analogdevicesinc/msdk](https://github.com/analogdevicesinc/msdk)
+
+For paper-style evaluation, we modify `main.c` to report:
+
+* inference latency
+* energy/power measurements (as used in our evaluation scripts)
+
+### 6.5 Provided examples
+
+This repo includes example exported projects and checkpoints under:
+
+* `inference/`
+
+Example:
+
+* `inference/indoor_env_1d_51_q8824/`
+* `inference/indoor_env_1d_91_q8824/`
+* `inference/indoor_mixed_seed_46__L51__8_8_2_4_indoor_mixed_seed_46__L51__8_8_2_4_qat_best_qmixed.pth.tar`
+* `indoor_mixed_seed_46__L91__8_8_2_4_indoor_mixed_seed_46__L91__8_8_2_4_qat_best_qmixed.pth.tar`
+
+---
 
 ## Citation & Reaching out
 If you use our work for your own research, please cite us with the below: 
@@ -126,5 +317,3 @@ If you use our work for your own research, please cite us with the below:
 You can also reach out through email to: 
 - Hamza Abushahla - b00090279@alumni.aus.edu
 - Dr. Mohamed AlHajri - mialhajri@aus.edu
-
-
