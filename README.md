@@ -51,13 +51,18 @@ This repository is organized as **overlays** on top of the official Analog Devic
 - `synthesis/`
   Overlay files for `ai8x-synthesis`:
   - izer configs / network YAMLs
-  - generation scripts for hardware projects
+  - generation scripts for hardware project generation
 
 - `inference/`
   Example exported projects and ready-to-run MAX78002 deployments:
   - generated izer project folders (e.g., `indoor_env_1d_51_q8824/`)
   - example quantized checkpoints (when applicable)
 
+- `results/`
+  Raw experiment outputs and processed summaries used in the paper:
+  - CSV logs for simulation sweeps (QAT / PTQ)
+  - aggregated summary tables (e.g., mean/std across seeds)
+  
 - `figs/`
   Figures used in this repo/README
 
@@ -75,11 +80,15 @@ conda env create -f envs/max_mac.yml
 conda activate max
 ````
 
-### Option B: Pip environment (fallback)
+### Option B: Conda environment (fallback)
+
+Create a fresh conda env called `max` (Python 3.11), then install the pip requirements inside it:
 
 ```bash
-python3.11 -m venv .venv
-source .venv/bin/activate
+conda create -n max python=3.11 -y
+conda activate max
+
+python -m pip install --upgrade pip
 pip install -r envs/requirements.txt
 ```
 
@@ -237,25 +246,40 @@ Example:
 indoor_mixed_seed_46__L101__8_8_8_8_*_qat_best_q8.pth.tar
 ```
 
+
 ### 6.2 Synthesis (ai8x-synthesis / ai8xize)
 
-Go to:
+Make sure you are using the same Python environment set up for the ai8x toolchain.
+
+Go to `ai8x-synthesis`:
 
 ```bash
 cd ../ai8x-synthesis
-```
+````
 
 Edit the generation script (example):
 
 * `scripts/gen_indoor_1d.sh`
 
-Set:
+Set inside the script:
 
 * `LENGTH=101`
-* `CONFIG="8-8-8-8"` (or any MPQ config like `8-8-2-4`)
+* `CONFIG="8-8-8-8"` (or MPQ config such as `8-8-2-4`)
 * `CHECKPOINT=<path-to-quantized-checkpoint>`
 
-The script calls `ai8xize.py` to generate a deployable C project, e.g.:
+Make the script executable (only once):
+
+```bash
+chmod +x scripts/gen_indoor_1d.sh
+```
+
+Run the script from the `ai8x-synthesis` root:
+
+```bash
+./scripts/gen_indoor_1d.sh
+```
+
+The script internally calls `ai8xize.py` to generate a deployable C/C++ project, e.g.:
 
 ```bash
 python ai8xize.py \
