@@ -11,24 +11,15 @@ This repository contains code and resources for the paper: [Sub-Millisecond, Mic
 
 ## 📌 Overview
 
-This work presents a **hardware-aware framework that integrates Quantization-Aware Training (QAT) with Layer-Wise Mixed-Precision Quantization (MPQ)** to enable sub-millisecond, microjoule inference for indoor environment classification on the **MAX78002 microcontroller**.  
-The main contributions of this work are summarized as follows:
+This work presents the **first hardware-validated** framework that integrates **Quantization-Aware Training (QAT)** with **layer-wise Mixed-Precision Quantization (MPQ)** to enable sub-millisecond, microjoule indoor environment identification on the **MAX78002 microcontroller**. The main contributions are:
 
-- We redesign the CNN from [^1] into a **hardware-aware architecture** optimized for the MAX78002, enabling efficient low-precision inference under tight on-chip memory and energy constraints.
+- We evaluate CNN-based indoor environment identification on resource-constrained IoT hardware by deploying QAT-enabled, layer-wise MPQ models across multiple bandwidth settings, showing that MPQ consistently outperforms uniform quantization.
 
-- Using **QAT**, we systematically explore **layer-wise precision assignments** across multiple input bandwidths, showing that MPQ consistently outperforms uniform INT8 quantization in the accuracy–efficiency trade-off.
+- We provide hardware-grounded, on-device deployment characterization by separating weight loading from inference, evaluating clocking modes, and quantifying their impact on energy–latency trade-offs.
 
-- The **most-optimal MPQ configuration** achieves a **77.12% smaller model size**, **9.89% faster inference**, and **21.88% lower inference energy** than the uniform INT8 baseline, while maintaining a high **99.22% accuracy**.
+- At **99.22% accuracy**, the best MPQ configuration achieves **127.7 µs** latency and **27 µJ** per inference, while reducing model size by **77%** and delivering **10%** faster inference and **22%** lower inference energy than uniform INT8; it also reduces weight-loading time and energy by **85.2%** and **56.1%**, respectively.
 
-- **Real-time deployment** on the MAX78002 achieves **127.7 µs latency** and **27 µJ energy per inference**, with MPQ further reducing **weight-loading time and energy by 85.15% and 56.14%**, respectively.
-
-- **More compact MPQ configurations** achieve **latencies as low as 75.5 µs** and **15.6 µJ per inference**, corresponding to **reductions of 86.95% in model size, 46.74% in inference time, 54.85% in inference energy, 91.54% in weight-loading time,** and **74.78% in weight-loading energy**, offering flexible trade-offs under a relaxed **98% accuracy** requirement.
-
-- **Different clocking modes** are evaluated on the MAX78002, revealing distinct energy–latency trade-offs and showing that MPQ maintains efficiency across frequencies.
-
-- **Deployment insights** are provided for managing frequent model switching in multi-DNN deployments, aligning quantization, memory, and clocking modes with application constraints.
-
-[^1]: https://ieeexplore.ieee.org/abstract/document/11021689
+- Under a relaxed **98% accuracy** requirement, compact MPQ configurations achieve **75.5 µs** latency and **15.6 µJ** per inference, with reductions of **87%** in model size, **46.7%** in inference time, **55%** in inference energy, **91.5%** in weight-loading time, and **74.8%** in weight-loading energy, enabling flexible accuracy–efficiency trade-offs.
 
 ---
 
