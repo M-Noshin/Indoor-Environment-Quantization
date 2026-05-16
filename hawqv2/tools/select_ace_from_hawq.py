@@ -51,6 +51,14 @@ def parse_args() -> argparse.Namespace:
         help="Rows to print after ACE sorting. Use 0 to print all.",
     )
     parser.add_argument("--output", help="Optional JSON output path for the joined result.")
+    parser.add_argument(
+        "--report-md",
+        help="Optional Markdown report path with the selected result and top candidates.",
+    )
+    parser.add_argument(
+        "--report-csv",
+        help="Optional compact CSV path with ACE-ranked candidates.",
+    )
     return parser.parse_args()
 
 
@@ -159,6 +167,93 @@ def print_rows(rows: list[dict[str, Any]], title: str, limit: int) -> None:
         )
 
 
+def write_report_csv(rows: list[dict[str, Any]], output_path: Path) -> None:
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fieldnames = [
+        "ace_rank",
+        "alpha",
+        "config",
+        "mean_acc",
+        "std_acc",
+        "size_kb",
+        "ace",
+        "omega",
+        "hawq_rank",
+        "hawq_compression_ratio",
+    ]
+    with output_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        for index, row in enumerate(rows, 1):
+            writer.writerow(
+                {
+                    "ace_rank": index,
+                    "alpha": row["alpha"],
+                    "config": row["config"],
+                    "mean_acc": row["mean_acc"],
+                    "std_acc": row["std_acc"],
+                    "size_kb": row["size_kb"],
+                    "ace": row["ace"],
+                    "omega": row["omega"],
+                    "hawq_rank": row["hawq_rank"],
+                    "hawq_compression_ratio": row["hawq_compression_ratio"],
+                }
+            )
+
+
+def write_report_md(
+    payload: dict[str, Any],
+    output_path: Path,
+    top_n: int = 20,
+) -> None:
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    lines: list[str] = []
+    lines.append("# HAWQ + ACE Summary")
+    lines.append("")
+    lines.append(f"- Candidate set: `{payload['candidate_set']}`")
+    lines.append(f"- Target accuracy: `{payload['target_acc']}`")
+    lines.append(f"- ACE weights: `({payload['beta1']}, {payload['beta2']})`")
+    lines.append(f"- Baseline size: `{payload['s_base_kb']:.3f} kB`")
+    lines.append(f"- Joined HAWQ candidates: `{payload['num_joined_candidates']}`")
+    lines.append("")
+
+    selected = payload.get("selected")
+    if selected is not None:
+        lines.append("## Selected")
+        lines.append("")
+        lines.append(f"- Config: `{selected['config']}`")
+        lines.append(f"- Alpha: `{selected['alpha']}`")
+        lines.append(f"- Accuracy: `{selected['mean_acc']:.4f}%`")
+        lines.append(f"- Size: `{selected['size_kb']:.3f} kB`")
+        lines.append(f"- ACE: `{selected['ace']:.9f}`")
+        lines.append(f"- Omega: `{selected['omega']:.12g}`")
+        lines.append(f"- HAWQ rank within alpha frontier: `{selected['hawq_rank']}`")
+        lines.append("")
+
+    lines.append(f"## Top {min(top_n, len(payload['rows']))} ACE-ranked candidates")
+    lines.append("")
+    lines.append("| ACE Rank | Alpha | Config | Acc. (%) | Size (kB) | ACE | Omega | HAWQ Rank |")
+    lines.append("| ---: | ---: | --- | ---: | ---: | ---: | ---: | ---: |")
+    for index, row in enumerate(payload["rows"][:top_n], 1):
+        lines.append(
+            f"| {index} | {row['alpha']} | {row['config']} | "
+            f"{row['mean_acc']:.4f} | {row['size_kb']:.3f} | "
+            f"{row['ace']:.9f} | {row['omega']:.12g} | {row['hawq_rank']} |"
+        )
+    lines.append("")
+
+    by_alpha: dict[int, int] = {}
+    for row in payload["rows"]:
+        by_alpha[row["alpha"]] = by_alpha.get(row["alpha"], 0) + 1
+    lines.append("## Frontier Counts by Alpha")
+    lines.append("")
+    for alpha in sorted(by_alpha.keys(), reverse=True):
+        lines.append(f"- `alpha={alpha}`: `{by_alpha[alpha]}` candidates")
+    lines.append("")
+
+    output_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def main() -> None:
     args = parse_args()
     if abs((args.beta1 + args.beta2) - 1.0) > 1e-9:
@@ -225,6 +320,14 @@ def main() -> None:
         output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
         print()
         print(f"Wrote {output}")
+    if args.report_csv:
+        report_csv = Path(args.report_csv)
+        write_report_csv(joined, report_csv)
+        print(f"Wrote {report_csv}")
+    if args.report_md:
+        report_md = Path(args.report_md)
+        write_report_md(payload, report_md)
+        print(f"Wrote {report_md}")
 
 
 if __name__ == "__main__":

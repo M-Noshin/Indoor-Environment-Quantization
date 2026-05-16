@@ -141,7 +141,7 @@ initializer = StandaloneHAWQPrecisionInitializer(
 )
 
 result = initializer.apply_init()
-save_hawq_result(result, "hawqv2_runs/result.json")
+save_hawq_result(result, "hawqv2/hawqv2_runs/result.json")
 ```
 
 For simpler use, the package also exposes `run_hawqv2(...)` through [selector.py](/Users/hamza/Documents/GitHub/Indoor-Environment-Quantization/hawqv2/src/hawqv2/selector.py).
@@ -156,7 +156,7 @@ python hawqv2/tools/run_hawqv2.py \
   --factory my_project.hawq_factory:build \
   --factory-kwargs '{"checkpoint": "path/to/model.pth"}' \
   --search all \
-  --output hawqv2_runs/result.json
+  --output hawqv2/hawqv2_runs/result.json
 ```
 
 Factory return conventions:
@@ -181,7 +181,7 @@ CLI smoke-test with the included toy factory:
 ```bash
 python hawqv2/tools/run_hawqv2.py \
   --factory hawqv2.examples.toy_factory:build \
-  --output hawqv2_runs/toy_result.json \
+  --output hawqv2/hawqv2_runs/toy_result.json \
   --device cpu \
   --num-data-points 16 \
   --max-trace-iters 2
@@ -234,7 +234,7 @@ To inspect a saved result as a table:
 
 ```bash
 python hawqv2/tools/print_hawq_frontier.py \
-  --input hawqv2_runs/result.json \
+  --input hawqv2/hawqv2_runs/result.json \
   --show frontier
 ```
 
@@ -275,7 +275,7 @@ to join HAWQ candidates with QAT sweep results:
 
 ```bash
 python hawqv2/tools/select_ace_from_hawq.py \
-  --item 91:hawqv2_runs/indoor_L91_float_hawqv2_pareto.json \
+  --item 91:hawqv2/hawqv2_runs/indoor_L91_float_hawqv2_pareto.json \
   --sweep-csv results/mixed_precision_sweep_summary_sizes.csv \
   --candidate-set frontier \
   --target-acc 99.2 \
@@ -300,14 +300,14 @@ To apply ACE across multiple alpha values, pass multiple `--item` arguments:
 
 ```bash
 python hawqv2/tools/select_ace_from_hawq.py \
-  --item 91:hawqv2_runs/indoor_L91_float_hawqv2_pareto.json \
-  --item 101:hawqv2_runs/indoor_L101_float_hawqv2_pareto.json \
+  --item 91:hawqv2/hawqv2_runs/indoor_L91_float_hawqv2_pareto.json \
+  --item 101:hawqv2/hawqv2_runs/indoor_L101_float_hawqv2_pareto.json \
   --sweep-csv results/mixed_precision_sweep_summary_sizes.csv \
   --candidate-set frontier \
   --target-acc 99.2 \
   --beta1 1.0 \
   --beta2 0.0 \
-  --output hawqv2_runs/hawq_frontier_ace99p2.json
+  --output hawqv2/hawqv2_runs/hawq_frontier_ace99p2.json
 ```
 
 For a full 11-alpha study, first create a manifest with one FP32 checkpoint per input length:
@@ -339,8 +339,8 @@ conda activate max
 python hawqv2/tools/run_hawqv2_indoor_sweep.py \
   --ai8x-root /Users/hamza/Desktop/testMax/ai8x-training \
   --data-dir /Users/hamza/Desktop/testMax/ai8x-training/data/indoor_environment \
-  --manifest hawqv2_runs/indoor_alpha_sweep_manifest.json \
-  --output-dir hawqv2_runs/indoor_alpha_sweep_pareto \
+  --manifest hawqv2/hawqv2_runs/indoor_alpha_sweep_manifest.json \
+  --output-dir hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto \
   --seed 42 \
   --device cpu \
   --bits 2 4 8 \
@@ -354,31 +354,31 @@ python hawqv2/tools/run_hawqv2_indoor_sweep.py \
 This writes one HAWQ result per alpha under:
 
 ```text
-hawqv2_runs/indoor_alpha_sweep_pareto/results/
+hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto/results/
 ```
 
 Finally, apply ACE to the union of HAWQ frontier candidates. The exact command should include one `--item` per alpha:
 
 ```bash
 python hawqv2/tools/select_ace_from_hawq.py \
-  --item 101:hawqv2_runs/indoor_alpha_sweep_pareto/results/L101.json \
-  --item 91:hawqv2_runs/indoor_alpha_sweep_pareto/results/L91.json \
-  --item 81:hawqv2_runs/indoor_alpha_sweep_pareto/results/L81.json \
-  --item 71:hawqv2_runs/indoor_alpha_sweep_pareto/results/L71.json \
-  --item 61:hawqv2_runs/indoor_alpha_sweep_pareto/results/L61.json \
-  --item 51:hawqv2_runs/indoor_alpha_sweep_pareto/results/L51.json \
-  --item 41:hawqv2_runs/indoor_alpha_sweep_pareto/results/L41.json \
-  --item 31:hawqv2_runs/indoor_alpha_sweep_pareto/results/L31.json \
-  --item 21:hawqv2_runs/indoor_alpha_sweep_pareto/results/L21.json \
-  --item 11:hawqv2_runs/indoor_alpha_sweep_pareto/results/L11.json \
-  --item 5:hawqv2_runs/indoor_alpha_sweep_pareto/results/L5.json \
+  --item 101:hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto/results/L101.json \
+  --item 91:hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto/results/L91.json \
+  --item 81:hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto/results/L81.json \
+  --item 71:hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto/results/L71.json \
+  --item 61:hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto/results/L61.json \
+  --item 51:hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto/results/L51.json \
+  --item 41:hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto/results/L41.json \
+  --item 31:hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto/results/L31.json \
+  --item 21:hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto/results/L21.json \
+  --item 11:hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto/results/L11.json \
+  --item 5:hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto/results/L5.json \
   --sweep-csv results/mixed_precision_sweep_summary_sizes.csv \
   --candidate-set frontier \
   --target-acc 99.2 \
   --beta1 1.0 \
   --beta2 0.0 \
   --limit 0 \
-  --output hawqv2_runs/indoor_alpha_sweep_pareto/hawq_frontier_ace99p2.json
+  --output hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto/hawq_frontier_ace99p2.json
 ```
 
 The validation question is whether the union of HAWQ frontiers still selects the exhaustive ACE-optimal configuration.
@@ -424,8 +424,8 @@ python hawqv2/tools/run_hawqv2_indoor.py \
   --data-dir training/data/indoor_environment \
   --checkpoint path/to/checkpoint.pth.tar \
   --search all \
-  --output hawqv2_runs/indoor_hawqv2.json \
-  --policy-output hawqv2_runs/qat_policy_hawqv2.yaml \
+  --output hawqv2/hawqv2_runs/indoor_hawqv2.json \
+  --policy-output hawqv2/hawqv2_runs/qat_policy_hawqv2.yaml \
   --selection compression_ratio \
   --compression-ratio 1.5
 ```
@@ -455,7 +455,7 @@ python hawqv2/tools/run_hawqv2_indoor_sweep.py \
   --ai8x-root /path/to/ai8x-training \
   --data-dir /path/to/ai8x-training/data/indoor_environment \
   --manifest hawqv2/examples/indoor_alpha_sweep_manifest.json \
-  --output-dir hawqv2_runs/indoor_alpha_sweep \
+  --output-dir hawqv2/hawqv2_runs/indoor_alpha_sweep \
   --seed 42 \
   --device cpu \
   --bits 2 4 8 \
