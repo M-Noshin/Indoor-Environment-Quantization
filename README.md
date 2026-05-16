@@ -153,6 +153,15 @@ python train.py --epochs 10 --batch-size 256 \
 **PTQ-only (no QAT):**
 Set `--qat-policy` to `None` (or remove it, depending on your local script conventions).
 
+**Float checkpoint for HAWQ:**
+If you want a clean FP32 checkpoint for HAWQ-V2 selection, use:
+
+```bash
+./scripts/train_float_for_hawq.sh 101 42
+```
+
+This runs standard training with `--qat-policy None` and prints the resulting `best.pth.tar` path to use as HAWQ input.
+
 **Outputs (logs directory):**
 
 * `checkpoint.pth.tar`, `best.pth.tar`: float checkpoints
