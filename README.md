@@ -197,6 +197,8 @@ What it does:
 * Runs **full QAT**, then quantizes and evaluates each run
 * Writes detailed and aggregated CSV summaries
 
+By default the sweep uses **5 seeds** starting at **42** (seeds 42–46 inclusive), matching the script’s positional defaults. Override with `python train_indoor_1D_mixed_sweep.py <num_seeds> <start_seed>`.
+
 Run:
 
 ```bash
