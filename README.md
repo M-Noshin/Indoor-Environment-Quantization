@@ -57,9 +57,20 @@ This repository is organized as **overlays** on top of the official Analog Devic
 - `figs/`
   Figures used in this repo/README
 
+- `hawqv2/` (**git submodule** → [HAWQ-V2](https://github.com/7abushahla/HAWQ-V2))
+  Standalone HAWQ-V2 initializer, tools, and bundled example runs. After cloning this repo, run `git submodule update --init --recursive` (or clone with `--recursive`).
+
 ---
 
 ## 1) Environment Setup
+
+Clone this repository **with submodules** so `hawqv2/` is populated (HAWQ-V2 lives in a separate repo):
+
+```bash
+git clone --recursive <URL-of-this-repository>
+# or, if you already cloned without --recursive:
+git submodule update --init --recursive
+```
 
 ### Option A (Recommended): Conda environment
 From the repo root:

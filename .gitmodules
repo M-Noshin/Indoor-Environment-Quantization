@@ -1,0 +1,3 @@
+[submodule "hawqv2"]
+	path = hawqv2
+	url = https://github.com/7abushahla/HAWQ-V2.git
