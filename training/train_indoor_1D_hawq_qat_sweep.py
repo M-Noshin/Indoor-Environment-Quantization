@@ -64,7 +64,8 @@ if not OUTPUT_DIR.is_absolute():
 LOGS_DIR = OUTPUT_DIR / "logs"
 CHECKPOINTS_DIR = OUTPUT_DIR / "checkpoints"
 POLICY_DIR = OUTPUT_DIR / "policies"
-RUN_CWD = OUTPUT_DIR
+# train.py walks ./models from cwd; must be ai8x-training root, not OUTPUT_DIR.
+RUN_CWD = REPO_ROOT
 
 DATA_DIR = Path(args.data_dir)
 if not DATA_DIR.is_absolute():

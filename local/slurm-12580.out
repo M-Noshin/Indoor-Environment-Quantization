@@ -1,0 +1,721 @@
+Wrote 61 candidates to /shared/b00090279/Indoor-Environment-Quantization/hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto_seed42/hawq_frontier_candidates_part05.csv
+
+================================================================================
+HAWQ-Reduced Mixed-Precision QAT Sweep
+================================================================================
+Input lengths: [21, 11, 5]
+Seeds: [42, 43, 44, 45, 46]
+Candidate source: /shared/b00090279/Indoor-Environment-Quantization/hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto_seed42/hawq_frontier_candidates_part05.csv
+Candidate count: 61
+Total QAT runs: 305
+DataLoader workers: 4
+Output: /shared/b00090279/testMax/ai8x-training/hawq_qat_frontier_p05
+================================================================================
+
+################################################################################
+INPUT LENGTH: 21 (22 candidates)
+################################################################################
+Training QAT: INT 2-2-2-2 (L=21, seed=42)
+Log file for this run: /shared/b00090279/testMax/ai8x-training/hawq_qat_frontier_p05/indoor_hawq_qat_seed_42__L21__2_2_2_2___2026.05.17-194328/indoor_hawq_qat_seed_42__L21__2_2_2_2___2026.05.17-194328.log
+Configuring device: MAX78002, simulate=False.
+Torch version: 2.2.2+cu121 | CUDA compiled: 12.1
+Selected training device: cuda
+torch.cuda.is_available(): True | torch.cuda.device_count(): 1
+CUDA_VISIBLE_DEVICES=0
+CUDA current_device=0 name=NVIDIA A10G
+CUDA mem: allocated=0.0 MiB | reserved=0.0 MiB
+Optimizer Type: <class 'torch.optim.adam.Adam'>
+Optimizer Args: {'lr': 0.001, 'betas': (0.9, 0.999), 'eps': 1e-08, 'weight_decay': 0.0005, 'amsgrad': False, 'maximize': False, 'foreach': None, 'capturable': False, 'differentiable': False, 'fused': None}
+Reading compression schedule from: /shared/b00090279/testMax/ai8x-training/policies/schedule-indoor-env.yaml
+Dataset sizes:
+	training=209600
+	validation=23200
+	test=77600
+
+
+Training epoch: 209600 samples (256 per mini-batch, world size: 1)
+Epoch: [0][   10/  819]    Overall Loss 1.249563    Objective Loss 1.249563                                        LR 0.001000    Time 0.300328    
+Epoch: [0][   20/  819]    Overall Loss 1.128709    Objective Loss 1.128709                                        LR 0.001000    Time 0.155121    
+Epoch: [0][   30/  819]    Overall Loss 1.040011    Objective Loss 1.040011                                        LR 0.001000    Time 0.106918    
+Epoch: [0][   40/  819]    Overall Loss 0.979648    Objective Loss 0.979648                                        LR 0.001000    Time 0.082535    
+Epoch: [0][   50/  819]    Overall Loss 0.926750    Objective Loss 0.926750                                        LR 0.001000    Time 0.068010    
+Epoch: [0][   60/  819]    Overall Loss 0.874215    Objective Loss 0.874215                                        LR 0.001000    Time 0.058297    
+Epoch: [0][   70/  819]    Overall Loss 0.827306    Objective Loss 0.827306                                        LR 0.001000    Time 0.051336    
+Epoch: [0][   80/  819]    Overall Loss 0.788998    Objective Loss 0.788998                                        LR 0.001000    Time 0.046155    
+Epoch: [0][   90/  819]    Overall Loss 0.753079    Objective Loss 0.753079                                        LR 0.001000    Time 0.042110    
+Epoch: [0][  100/  819]    Overall Loss 0.719509    Objective Loss 0.719509                                        LR 0.001000    Time 0.038874    
+Epoch: [0][  110/  819]    Overall Loss 0.688718    Objective Loss 0.688718                                        LR 0.001000    Time 0.036224    
+Epoch: [0][  120/  819]    Overall Loss 0.658850    Objective Loss 0.658850                                        LR 0.001000    Time 0.034046    
+Epoch: [0][  130/  819]    Overall Loss 0.630302    Objective Loss 0.630302                                        LR 0.001000    Time 0.032155    
+Epoch: [0][  140/  819]    Overall Loss 0.605990    Objective Loss 0.605990                                        LR 0.001000    Time 0.030574    
+Epoch: [0][  150/  819]    Overall Loss 0.582867    Objective Loss 0.582867                                        LR 0.001000    Time 0.029197    
+Epoch: [0][  160/  819]    Overall Loss 0.561015    Objective Loss 0.561015                                        LR 0.001000    Time 0.027971    
+Epoch: [0][  170/  819]    Overall Loss 0.541487    Objective Loss 0.541487                                        LR 0.001000    Time 0.026914    
+Epoch: [0][  180/  819]    Overall Loss 0.522731    Objective Loss 0.522731                                        LR 0.001000    Time 0.025957    
+Epoch: [0][  190/  819]    Overall Loss 0.505495    Objective Loss 0.505495                                        LR 0.001000    Time 0.025131    
+Epoch: [0][  200/  819]    Overall Loss 0.489640    Objective Loss 0.489640                                        LR 0.001000    Time 0.024347    
+Epoch: [0][  210/  819]    Overall Loss 0.474457    Objective Loss 0.474457                                        LR 0.001000    Time 0.023655    
+Epoch: [0][  220/  819]    Overall Loss 0.460075    Objective Loss 0.460075                                        LR 0.001000    Time 0.023041    
+Epoch: [0][  230/  819]    Overall Loss 0.446796    Objective Loss 0.446796                                        LR 0.001000    Time 0.022473    
+Epoch: [0][  240/  819]    Overall Loss 0.434429    Objective Loss 0.434429                                        LR 0.001000    Time 0.021958    
+Epoch: [0][  250/  819]    Overall Loss 0.423000    Objective Loss 0.423000                                        LR 0.001000    Time 0.021465    
+Epoch: [0][  260/  819]    Overall Loss 0.412647    Objective Loss 0.412647                                        LR 0.001000    Time 0.021001    
+Epoch: [0][  270/  819]    Overall Loss 0.401929    Objective Loss 0.401929                                        LR 0.001000    Time 0.020600    
+Epoch: [0][  280/  819]    Overall Loss 0.391959    Objective Loss 0.391959                                        LR 0.001000    Time 0.020219    
+Epoch: [0][  290/  819]    Overall Loss 0.382527    Objective Loss 0.382527                                        LR 0.001000    Time 0.019837    
+Epoch: [0][  300/  819]    Overall Loss 0.373525    Objective Loss 0.373525                                        LR 0.001000    Time 0.019532    
+Epoch: [0][  310/  819]    Overall Loss 0.364953    Objective Loss 0.364953                                        LR 0.001000    Time 0.019214    
+Epoch: [0][  320/  819]    Overall Loss 0.357053    Objective Loss 0.357053                                        LR 0.001000    Time 0.018916    
+Epoch: [0][  330/  819]    Overall Loss 0.349504    Objective Loss 0.349504                                        LR 0.001000    Time 0.018643    
+Epoch: [0][  340/  819]    Overall Loss 0.342524    Objective Loss 0.342524                                        LR 0.001000    Time 0.018398    
+Epoch: [0][  350/  819]    Overall Loss 0.335188    Objective Loss 0.335188                                        LR 0.001000    Time 0.018131    
+Epoch: [0][  360/  819]    Overall Loss 0.328557    Objective Loss 0.328557                                        LR 0.001000    Time 0.017916    
+Epoch: [0][  370/  819]    Overall Loss 0.322416    Objective Loss 0.322416                                        LR 0.001000    Time 0.017677    
+Epoch: [0][  380/  819]    Overall Loss 0.316295    Objective Loss 0.316295                                        LR 0.001000    Time 0.017486    
+Epoch: [0][  390/  819]    Overall Loss 0.310220    Objective Loss 0.310220                                        LR 0.001000    Time 0.017266    
+Epoch: [0][  400/  819]    Overall Loss 0.304510    Objective Loss 0.304510                                        LR 0.001000    Time 0.017097    
+Epoch: [0][  410/  819]    Overall Loss 0.299211    Objective Loss 0.299211                                        LR 0.001000    Time 0.016920    
+Epoch: [0][  420/  819]    Overall Loss 0.293871    Objective Loss 0.293871                                        LR 0.001000    Time 0.016745    
+Epoch: [0][  430/  819]    Overall Loss 0.288650    Objective Loss 0.288650                                        LR 0.001000    Time 0.016595    
+Epoch: [0][  440/  819]    Overall Loss 0.283692    Objective Loss 0.283692                                        LR 0.001000    Time 0.016426    
+Epoch: [0][  450/  819]    Overall Loss 0.278855    Objective Loss 0.278855                                        LR 0.001000    Time 0.016287    
+Epoch: [0][  460/  819]    Overall Loss 0.274448    Objective Loss 0.274448                                        LR 0.001000    Time 0.016145    
+Epoch: [0][  470/  819]    Overall Loss 0.270048    Objective Loss 0.270048                                        LR 0.001000    Time 0.016019    
+Epoch: [0][  480/  819]    Overall Loss 0.265923    Objective Loss 0.265923                                        LR 0.001000    Time 0.015881    
+Epoch: [0][  490/  819]    Overall Loss 0.261883    Objective Loss 0.261883                                        LR 0.001000    Time 0.015764    
+Epoch: [0][  500/  819]    Overall Loss 0.257920    Objective Loss 0.257920                                        LR 0.001000    Time 0.015648    
+Epoch: [0][  510/  819]    Overall Loss 0.254228    Objective Loss 0.254228                                        LR 0.001000    Time 0.015530    
+Epoch: [0][  520/  819]    Overall Loss 0.250413    Objective Loss 0.250413                                        LR 0.001000    Time 0.015413    
+Epoch: [0][  530/  819]    Overall Loss 0.246893    Objective Loss 0.246893                                        LR 0.001000    Time 0.015303    
+Epoch: [0][  540/  819]    Overall Loss 0.243735    Objective Loss 0.243735                                        LR 0.001000    Time 0.015214    
+Epoch: [0][  550/  819]    Overall Loss 0.240303    Objective Loss 0.240303                                        LR 0.001000    Time 0.015118    
+Epoch: [0][  560/  819]    Overall Loss 0.237130    Objective Loss 0.237130                                        LR 0.001000    Time 0.015016    
+Epoch: [0][  570/  819]    Overall Loss 0.234025    Objective Loss 0.234025                                        LR 0.001000    Time 0.014925    
+Epoch: [0][  580/  819]    Overall Loss 0.231064    Objective Loss 0.231064                                        LR 0.001000    Time 0.014832    
+Epoch: [0][  590/  819]    Overall Loss 0.228185    Objective Loss 0.228185                                        LR 0.001000    Time 0.014749    
+Epoch: [0][  600/  819]    Overall Loss 0.225230    Objective Loss 0.225230                                        LR 0.001000    Time 0.014665    
+Epoch: [0][  610/  819]    Overall Loss 0.222362    Objective Loss 0.222362                                        LR 0.001000    Time 0.014581    
+Epoch: [0][  620/  819]    Overall Loss 0.219700    Objective Loss 0.219700                                        LR 0.001000    Time 0.014496    
+Epoch: [0][  630/  819]    Overall Loss 0.217208    Objective Loss 0.217208                                        LR 0.001000    Time 0.014499    
+Epoch: [0][  640/  819]    Overall Loss 0.214828    Objective Loss 0.214828                                        LR 0.001000    Time 0.014448    
+Epoch: [0][  650/  819]    Overall Loss 0.212307    Objective Loss 0.212307                                        LR 0.001000    Time 0.014404    
+Epoch: [0][  660/  819]    Overall Loss 0.209815    Objective Loss 0.209815                                        LR 0.001000    Time 0.014340    
+Epoch: [0][  670/  819]    Overall Loss 0.207358    Objective Loss 0.207358                                        LR 0.001000    Time 0.014276    
+Epoch: [0][  680/  819]    Overall Loss 0.204997    Objective Loss 0.204997                                        LR 0.001000    Time 0.014219    
+Epoch: [0][  690/  819]    Overall Loss 0.202739    Objective Loss 0.202739                                        LR 0.001000    Time 0.014150    
+Epoch: [0][  700/  819]    Overall Loss 0.200512    Objective Loss 0.200512                                        LR 0.001000    Time 0.014090    
+Epoch: [0][  710/  819]    Overall Loss 0.198282    Objective Loss 0.198282                                        LR 0.001000    Time 0.014027    
+Epoch: [0][  720/  819]    Overall Loss 0.196161    Objective Loss 0.196161                                        LR 0.001000    Time 0.013962    
+Epoch: [0][  730/  819]    Overall Loss 0.194036    Objective Loss 0.194036                                        LR 0.001000    Time 0.013909    
+Epoch: [0][  740/  819]    Overall Loss 0.191979    Objective Loss 0.191979                                        LR 0.001000    Time 0.013861    
+Epoch: [0][  750/  819]    Overall Loss 0.190008    Objective Loss 0.190008                                        LR 0.001000    Time 0.013799    
+Epoch: [0][  760/  819]    Overall Loss 0.187954    Objective Loss 0.187954                                        LR 0.001000    Time 0.013746    
+Epoch: [0][  770/  819]    Overall Loss 0.186051    Objective Loss 0.186051                                        LR 0.001000    Time 0.013699    
+Epoch: [0][  780/  819]    Overall Loss 0.184193    Objective Loss 0.184193                                        LR 0.001000    Time 0.013648    
+Epoch: [0][  790/  819]    Overall Loss 0.182336    Objective Loss 0.182336                                        LR 0.001000    Time 0.013599    
+Epoch: [0][  800/  819]    Overall Loss 0.180608    Objective Loss 0.180608                                        LR 0.001000    Time 0.013553    
+Epoch: [0][  810/  819]    Overall Loss 0.178818    Objective Loss 0.178818                                        LR 0.001000    Time 0.013506    
+Epoch: [0][  819/  819]    Overall Loss 0.177249    Objective Loss 0.177249    Top1 99.107143    LR 0.001000    Time 0.013514    
+--- validate (epoch=0)-----------
+23200 samples (256 per mini-batch)
+Epoch: [0][   10/   91]    Loss 0.239954    Top1 91.054688    
+Epoch: [0][   20/   91]    Loss 0.259502    Top1 90.292969    
+Epoch: [0][   30/   91]    Loss 0.247576    Top1 90.598958    
+Epoch: [0][   40/   91]    Loss 0.248626    Top1 90.781250    
+Epoch: [0][   50/   91]    Loss 0.247680    Top1 90.789062    
+Epoch: [0][   60/   91]    Loss 0.250138    Top1 90.800781    
+Epoch: [0][   70/   91]    Loss 0.251099    Top1 90.820312    
+Epoch: [0][   80/   91]    Loss 0.252089    Top1 90.776367    
+Epoch: [0][   90/   91]    Loss 0.252005    Top1 90.711806    
+Epoch: [0][   91/   91]    Loss 0.252088    Top1 90.706897    
+==> Top1: 90.707    Loss: 0.252
+
+==> Best [Top1: 90.707   Params: 43160 on epoch: 0]
+Saving checkpoint to: /shared/b00090279/testMax/ai8x-training/hawq_qat_frontier_p05/indoor_hawq_qat_seed_42__L21__2_2_2_2___2026.05.17-194328/indoor_hawq_qat_seed_42__L21__2_2_2_2_checkpoint.pth.tar
+
+
+Training epoch: 209600 samples (256 per mini-batch, world size: 1)
+Epoch: [1][   10/  819]    Overall Loss 0.031761    Objective Loss 0.031761                                        LR 0.000976    Time 0.082620    
+Epoch: [1][   20/  819]    Overall Loss 0.036657    Objective Loss 0.036657                                        LR 0.000976    Time 0.046495    
+Epoch: [1][   30/  819]    Overall Loss 0.035565    Objective Loss 0.035565                                        LR 0.000976    Time 0.034265    
+Epoch: [1][   40/  819]    Overall Loss 0.035474    Objective Loss 0.035474                                        LR 0.000976    Time 0.028566    
+Epoch: [1][   50/  819]    Overall Loss 0.035087    Objective Loss 0.035087                                        LR 0.000976    Time 0.024937    
+Epoch: [1][   60/  819]    Overall Loss 0.034938    Objective Loss 0.034938                                        LR 0.000976    Time 0.022540    
+Epoch: [1][   70/  819]    Overall Loss 0.036253    Objective Loss 0.036253                                        LR 0.000976    Time 0.020725    
+Epoch: [1][   80/  819]    Overall Loss 0.036198    Objective Loss 0.036198                                        LR 0.000976    Time 0.019473    
+Epoch: [1][   90/  819]    Overall Loss 0.036066    Objective Loss 0.036066                                        LR 0.000976    Time 0.018441    
+Epoch: [1][  100/  819]    Overall Loss 0.035790    Objective Loss 0.035790                                        LR 0.000976    Time 0.017685    
+Epoch: [1][  110/  819]    Overall Loss 0.035307    Objective Loss 0.035307                                        LR 0.000976    Time 0.017061    
+Epoch: [1][  120/  819]    Overall Loss 0.034839    Objective Loss 0.034839                                        LR 0.000976    Time 0.016526    
+Epoch: [1][  130/  819]    Overall Loss 0.034707    Objective Loss 0.034707                                        LR 0.000976    Time 0.016066    
+Epoch: [1][  140/  819]    Overall Loss 0.035139    Objective Loss 0.035139                                        LR 0.000976    Time 0.015698    
+Epoch: [1][  150/  819]    Overall Loss 0.035100    Objective Loss 0.035100                                        LR 0.000976    Time 0.015355    
+Epoch: [1][  160/  819]    Overall Loss 0.035290    Objective Loss 0.035290                                        LR 0.000976    Time 0.015049    
+Epoch: [1][  170/  819]    Overall Loss 0.035256    Objective Loss 0.035256                                        LR 0.000976    Time 0.014821    
+Epoch: [1][  180/  819]    Overall Loss 0.035312    Objective Loss 0.035312                                        LR 0.000976    Time 0.014590    
+Epoch: [1][  190/  819]    Overall Loss 0.034855    Objective Loss 0.034855                                        LR 0.000976    Time 0.014400    
+Epoch: [1][  200/  819]    Overall Loss 0.034875    Objective Loss 0.034875                                        LR 0.000976    Time 0.014183    
+Epoch: [1][  210/  819]    Overall Loss 0.034626    Objective Loss 0.034626                                        LR 0.000976    Time 0.014011    
+Epoch: [1][  220/  819]    Overall Loss 0.034550    Objective Loss 0.034550                                        LR 0.000976    Time 0.013862    
+Epoch: [1][  230/  819]    Overall Loss 0.034116    Objective Loss 0.034116                                        LR 0.000976    Time 0.013737    
+Epoch: [1][  240/  819]    Overall Loss 0.033910    Objective Loss 0.033910                                        LR 0.000976    Time 0.013562    
+Epoch: [1][  250/  819]    Overall Loss 0.033804    Objective Loss 0.033804                                        LR 0.000976    Time 0.013479    
+Epoch: [1][  260/  819]    Overall Loss 0.033639    Objective Loss 0.033639                                        LR 0.000976    Time 0.013378    
+Epoch: [1][  270/  819]    Overall Loss 0.033449    Objective Loss 0.033449                                        LR 0.000976    Time 0.013257    
+Epoch: [1][  280/  819]    Overall Loss 0.033262    Objective Loss 0.033262                                        LR 0.000976    Time 0.013164    
+Epoch: [1][  290/  819]    Overall Loss 0.033108    Objective Loss 0.033108                                        LR 0.000976    Time 0.013094    
+Epoch: [1][  300/  819]    Overall Loss 0.032953    Objective Loss 0.032953                                        LR 0.000976    Time 0.013011    
+Epoch: [1][  310/  819]    Overall Loss 0.032849    Objective Loss 0.032849                                        LR 0.000976    Time 0.012930    
+Epoch: [1][  320/  819]    Overall Loss 0.032718    Objective Loss 0.032718                                        LR 0.000976    Time 0.012862    
+Epoch: [1][  330/  819]    Overall Loss 0.032525    Objective Loss 0.032525                                        LR 0.000976    Time 0.012791    
+Epoch: [1][  340/  819]    Overall Loss 0.032314    Objective Loss 0.032314                                        LR 0.000976    Time 0.012734    
+Epoch: [1][  350/  819]    Overall Loss 0.032216    Objective Loss 0.032216                                        LR 0.000976    Time 0.012668    
+Epoch: [1][  360/  819]    Overall Loss 0.032018    Objective Loss 0.032018                                        LR 0.000976    Time 0.012606    
+Epoch: [1][  370/  819]    Overall Loss 0.032013    Objective Loss 0.032013                                        LR 0.000976    Time 0.012565    
+Epoch: [1][  380/  819]    Overall Loss 0.031839    Objective Loss 0.031839                                        LR 0.000976    Time 0.012514    
+Epoch: [1][  390/  819]    Overall Loss 0.031648    Objective Loss 0.031648                                        LR 0.000976    Time 0.012465    
+Epoch: [1][  400/  819]    Overall Loss 0.031541    Objective Loss 0.031541                                        LR 0.000976    Time 0.012419    
+Epoch: [1][  410/  819]    Overall Loss 0.031372    Objective Loss 0.031372                                        LR 0.000976    Time 0.012375    
+Epoch: [1][  420/  819]    Overall Loss 0.031212    Objective Loss 0.031212                                        LR 0.000976    Time 0.012339    
+Epoch: [1][  430/  819]    Overall Loss 0.031248    Objective Loss 0.031248                                        LR 0.000976    Time 0.012302    
+Epoch: [1][  440/  819]    Overall Loss 0.030984    Objective Loss 0.030984                                        LR 0.000976    Time 0.012270    
+Epoch: [1][  450/  819]    Overall Loss 0.030858    Objective Loss 0.030858                                        LR 0.000976    Time 0.012223    
+Epoch: [1][  460/  819]    Overall Loss 0.030739    Objective Loss 0.030739                                        LR 0.000976    Time 0.012186    
+Epoch: [1][  470/  819]    Overall Loss 0.030587    Objective Loss 0.030587                                        LR 0.000976    Time 0.012159    
+Epoch: [1][  480/  819]    Overall Loss 0.030501    Objective Loss 0.030501                                        LR 0.000976    Time 0.012126    
+Epoch: [1][  490/  819]    Overall Loss 0.030355    Objective Loss 0.030355                                        LR 0.000976    Time 0.012097    
+Epoch: [1][  500/  819]    Overall Loss 0.030223    Objective Loss 0.030223                                        LR 0.000976    Time 0.012075    
+Epoch: [1][  510/  819]    Overall Loss 0.030150    Objective Loss 0.030150                                        LR 0.000976    Time 0.012050    
+Epoch: [1][  520/  819]    Overall Loss 0.029987    Objective Loss 0.029987                                        LR 0.000976    Time 0.012024    
+Epoch: [1][  530/  819]    Overall Loss 0.029908    Objective Loss 0.029908                                        LR 0.000976    Time 0.011998    
+Epoch: [1][  540/  819]    Overall Loss 0.029719    Objective Loss 0.029719                                        LR 0.000976    Time 0.011967    
+Epoch: [1][  550/  819]    Overall Loss 0.029586    Objective Loss 0.029586                                        LR 0.000976    Time 0.011949    
+Epoch: [1][  560/  819]    Overall Loss 0.029515    Objective Loss 0.029515                                        LR 0.000976    Time 0.011919    
+Epoch: [1][  570/  819]    Overall Loss 0.029305    Objective Loss 0.029305                                        LR 0.000976    Time 0.011899    
+Epoch: [1][  580/  819]    Overall Loss 0.029199    Objective Loss 0.029199                                        LR 0.000976    Time 0.011868    
+Epoch: [1][  590/  819]    Overall Loss 0.029096    Objective Loss 0.029096                                        LR 0.000976    Time 0.011864    
+Epoch: [1][  600/  819]    Overall Loss 0.029046    Objective Loss 0.029046                                        LR 0.000976    Time 0.011836    
+Epoch: [1][  610/  819]    Overall Loss 0.028943    Objective Loss 0.028943                                        LR 0.000976    Time 0.011829    
+Epoch: [1][  620/  819]    Overall Loss 0.028984    Objective Loss 0.028984                                        LR 0.000976    Time 0.011797    
+Epoch: [1][  630/  819]    Overall Loss 0.028917    Objective Loss 0.028917                                        LR 0.000976    Time 0.011770    
+Epoch: [1][  640/  819]    Overall Loss 0.028774    Objective Loss 0.028774                                        LR 0.000976    Time 0.011777    
+Epoch: [1][  650/  819]    Overall Loss 0.028877    Objective Loss 0.028877                                        LR 0.000976    Time 0.011755    
+Epoch: [1][  660/  819]    Overall Loss 0.028776    Objective Loss 0.028776                                        LR 0.000976    Time 0.011746    
+Epoch: [1][  670/  819]    Overall Loss 0.028671    Objective Loss 0.028671                                        LR 0.000976    Time 0.011733    
+Epoch: [1][  680/  819]    Overall Loss 0.028619    Objective Loss 0.028619                                        LR 0.000976    Time 0.011720    
+Epoch: [1][  690/  819]    Overall Loss 0.028593    Objective Loss 0.028593                                        LR 0.000976    Time 0.011699    
+Epoch: [1][  700/  819]    Overall Loss 0.028591    Objective Loss 0.028591                                        LR 0.000976    Time 0.011695    
+Epoch: [1][  710/  819]    Overall Loss 0.028490    Objective Loss 0.028490                                        LR 0.000976    Time 0.011680    
+Epoch: [1][  720/  819]    Overall Loss 0.028437    Objective Loss 0.028437                                        LR 0.000976    Time 0.011662    
+Epoch: [1][  730/  819]    Overall Loss 0.028334    Objective Loss 0.028334                                        LR 0.000976    Time 0.011644    
+Epoch: [1][  740/  819]    Overall Loss 0.028307    Objective Loss 0.028307                                        LR 0.000976    Time 0.011633    
+Epoch: [1][  750/  819]    Overall Loss 0.028264    Objective Loss 0.028264                                        LR 0.000976    Time 0.011622    
+Epoch: [1][  760/  819]    Overall Loss 0.028226    Objective Loss 0.028226                                        LR 0.000976    Time 0.011602    
+Epoch: [1][  770/  819]    Overall Loss 0.028161    Objective Loss 0.028161                                        LR 0.000976    Time 0.011591    
+Epoch: [1][  780/  819]    Overall Loss 0.028077    Objective Loss 0.028077                                        LR 0.000976    Time 0.011574    
+Epoch: [1][  790/  819]    Overall Loss 0.027972    Objective Loss 0.027972                                        LR 0.000976    Time 0.011568    
+Epoch: [1][  800/  819]    Overall Loss 0.027882    Objective Loss 0.027882                                        LR 0.000976    Time 0.011534    
+Epoch: [1][  810/  819]    Overall Loss 0.027811    Objective Loss 0.027811                                        LR 0.000976    Time 0.011543    
+Epoch: [1][  819/  819]    Overall Loss 0.027699    Objective Loss 0.027699    Top1 100.000000    LR 0.000976    Time 0.011567    
+--- validate (epoch=1)-----------
+23200 samples (256 per mini-batch)
+Epoch: [1][   10/   91]    Loss 0.234380    Top1 91.953125    
+Epoch: [1][   20/   91]    Loss 0.231461    Top1 91.582031    
+Epoch: [1][   30/   91]    Loss 0.220659    Top1 91.861979    
+Epoch: [1][   40/   91]    Loss 0.223784    Top1 91.875000    
+Epoch: [1][   50/   91]    Loss 0.227615    Top1 91.773438    
+Epoch: [1][   60/   91]    Loss 0.223945    Top1 91.861979    
+Epoch: [1][   70/   91]    Loss 0.225624    Top1 91.858259    
+Epoch: [1][   80/   91]    Loss 0.224551    Top1 91.845703    
+Epoch: [1][   90/   91]    Loss 0.226276    Top1 91.809896    
+Epoch: [1][   91/   91]    Loss 0.226886    Top1 91.797414    
+==> Top1: 91.797    Loss: 0.227
+
+==> Best [Top1: 91.797   Params: 43160 on epoch: 1]
+Saving checkpoint to: /shared/b00090279/testMax/ai8x-training/hawq_qat_frontier_p05/indoor_hawq_qat_seed_42__L21__2_2_2_2___2026.05.17-194328/indoor_hawq_qat_seed_42__L21__2_2_2_2_checkpoint.pth.tar
+
+
+Training epoch: 209600 samples (256 per mini-batch, world size: 1)
+Epoch: [2][   10/  819]    Overall Loss 0.021595    Objective Loss 0.021595                                        LR 0.000905    Time 0.102473    
+Epoch: [2][   20/  819]    Overall Loss 0.021200    Objective Loss 0.021200                                        LR 0.000905    Time 0.056460    
+Epoch: [2][   30/  819]    Overall Loss 0.021243    Objective Loss 0.021243                                        LR 0.000905    Time 0.041463    
+Epoch: [2][   40/  819]    Overall Loss 0.020042    Objective Loss 0.020042                                        LR 0.000905    Time 0.033651    
+Epoch: [2][   50/  819]    Overall Loss 0.019204    Objective Loss 0.019204                                        LR 0.000905    Time 0.029060    
+Epoch: [2][   60/  819]    Overall Loss 0.018395    Objective Loss 0.018395                                        LR 0.000905    Time 0.025940    
+Epoch: [2][   70/  819]    Overall Loss 0.018277    Objective Loss 0.018277                                        LR 0.000905    Time 0.023813    
+Epoch: [2][   80/  819]    Overall Loss 0.018240    Objective Loss 0.018240                                        LR 0.000905    Time 0.022146    
+Epoch: [2][   90/  819]    Overall Loss 0.017872    Objective Loss 0.017872                                        LR 0.000905    Time 0.020857    
+Epoch: [2][  100/  819]    Overall Loss 0.017823    Objective Loss 0.017823                                        LR 0.000905    Time 0.019906    
+Epoch: [2][  110/  819]    Overall Loss 0.017751    Objective Loss 0.017751                                        LR 0.000905    Time 0.019008    
+Epoch: [2][  120/  819]    Overall Loss 0.018136    Objective Loss 0.018136                                        LR 0.000905    Time 0.018297    
+Epoch: [2][  130/  819]    Overall Loss 0.018283    Objective Loss 0.018283                                        LR 0.000905    Time 0.017737    
+Epoch: [2][  140/  819]    Overall Loss 0.018388    Objective Loss 0.018388                                        LR 0.000905    Time 0.017271    
+Epoch: [2][  150/  819]    Overall Loss 0.018844    Objective Loss 0.018844                                        LR 0.000905    Time 0.016795    
+Epoch: [2][  160/  819]    Overall Loss 0.019022    Objective Loss 0.019022                                        LR 0.000905    Time 0.016439    
+Epoch: [2][  170/  819]    Overall Loss 0.018887    Objective Loss 0.018887                                        LR 0.000905    Time 0.016069    
+Epoch: [2][  180/  819]    Overall Loss 0.018843    Objective Loss 0.018843                                        LR 0.000905    Time 0.015789    
+Epoch: [2][  190/  819]    Overall Loss 0.018830    Objective Loss 0.018830                                        LR 0.000905    Time 0.015472    
+Epoch: [2][  200/  819]    Overall Loss 0.018767    Objective Loss 0.018767                                        LR 0.000905    Time 0.015257    
+Epoch: [2][  210/  819]    Overall Loss 0.018495    Objective Loss 0.018495                                        LR 0.000905    Time 0.015049    
+Epoch: [2][  220/  819]    Overall Loss 0.018692    Objective Loss 0.018692                                        LR 0.000905    Time 0.014830    
+Epoch: [2][  230/  819]    Overall Loss 0.018872    Objective Loss 0.018872                                        LR 0.000905    Time 0.014684    
+Epoch: [2][  240/  819]    Overall Loss 0.019124    Objective Loss 0.019124                                        LR 0.000905    Time 0.014532    
+Epoch: [2][  250/  819]    Overall Loss 0.019083    Objective Loss 0.019083                                        LR 0.000905    Time 0.014361    
+Epoch: [2][  260/  819]    Overall Loss 0.019078    Objective Loss 0.019078                                        LR 0.000905    Time 0.014220    
+Epoch: [2][  270/  819]    Overall Loss 0.018992    Objective Loss 0.018992                                        LR 0.000905    Time 0.014087    
+Epoch: [2][  280/  819]    Overall Loss 0.019038    Objective Loss 0.019038                                        LR 0.000905    Time 0.013982    
+Epoch: [2][  290/  819]    Overall Loss 0.019067    Objective Loss 0.019067                                        LR 0.000905    Time 0.013849    
+Epoch: [2][  300/  819]    Overall Loss 0.018989    Objective Loss 0.018989                                        LR 0.000905    Time 0.013761    
+Epoch: [2][  310/  819]    Overall Loss 0.018917    Objective Loss 0.018917                                        LR 0.000905    Time 0.013664    
+Epoch: [2][  320/  819]    Overall Loss 0.018737    Objective Loss 0.018737                                        LR 0.000905    Time 0.013573    
+Epoch: [2][  330/  819]    Overall Loss 0.018547    Objective Loss 0.018547                                        LR 0.000905    Time 0.013468    
+Epoch: [2][  340/  819]    Overall Loss 0.018418    Objective Loss 0.018418                                        LR 0.000905    Time 0.013390    
+Epoch: [2][  350/  819]    Overall Loss 0.018356    Objective Loss 0.018356                                        LR 0.000905    Time 0.013311    
+Epoch: [2][  360/  819]    Overall Loss 0.018353    Objective Loss 0.018353                                        LR 0.000905    Time 0.013237    
+Epoch: [2][  370/  819]    Overall Loss 0.018376    Objective Loss 0.018376                                        LR 0.000905    Time 0.013177    
+Epoch: [2][  380/  819]    Overall Loss 0.018332    Objective Loss 0.018332                                        LR 0.000905    Time 0.013103    
+Epoch: [2][  390/  819]    Overall Loss 0.018259    Objective Loss 0.018259                                        LR 0.000905    Time 0.013035    
+Epoch: [2][  400/  819]    Overall Loss 0.018167    Objective Loss 0.018167                                        LR 0.000905    Time 0.012990    
+Epoch: [2][  410/  819]    Overall Loss 0.018070    Objective Loss 0.018070                                        LR 0.000905    Time 0.012911    
+Epoch: [2][  420/  819]    Overall Loss 0.017973    Objective Loss 0.017973                                        LR 0.000905    Time 0.012872    
+Epoch: [2][  430/  819]    Overall Loss 0.017887    Objective Loss 0.017887                                        LR 0.000905    Time 0.012824    
+Epoch: [2][  440/  819]    Overall Loss 0.017793    Objective Loss 0.017793                                        LR 0.000905    Time 0.012758    
+Epoch: [2][  450/  819]    Overall Loss 0.017786    Objective Loss 0.017786                                        LR 0.000905    Time 0.012723    
+Epoch: [2][  460/  819]    Overall Loss 0.017727    Objective Loss 0.017727                                        LR 0.000905    Time 0.012673    
+Epoch: [2][  470/  819]    Overall Loss 0.017738    Objective Loss 0.017738                                        LR 0.000905    Time 0.012642    
+Epoch: [2][  480/  819]    Overall Loss 0.017777    Objective Loss 0.017777                                        LR 0.000905    Time 0.012592    
+Epoch: [2][  490/  819]    Overall Loss 0.017741    Objective Loss 0.017741                                        LR 0.000905    Time 0.012543    
+Epoch: [2][  500/  819]    Overall Loss 0.017749    Objective Loss 0.017749                                        LR 0.000905    Time 0.012503    
+Epoch: [2][  510/  819]    Overall Loss 0.017699    Objective Loss 0.017699                                        LR 0.000905    Time 0.012482    
+Epoch: [2][  520/  819]    Overall Loss 0.017741    Objective Loss 0.017741                                        LR 0.000905    Time 0.012440    
+Epoch: [2][  530/  819]    Overall Loss 0.017738    Objective Loss 0.017738                                        LR 0.000905    Time 0.012397    
+Epoch: [2][  540/  819]    Overall Loss 0.017697    Objective Loss 0.017697                                        LR 0.000905    Time 0.012368    
+Epoch: [2][  550/  819]    Overall Loss 0.017680    Objective Loss 0.017680                                        LR 0.000905    Time 0.012330    
+Epoch: [2][  560/  819]    Overall Loss 0.017694    Objective Loss 0.017694                                        LR 0.000905    Time 0.012311    
+Epoch: [2][  570/  819]    Overall Loss 0.017746    Objective Loss 0.017746                                        LR 0.000905    Time 0.012282    
+Epoch: [2][  580/  819]    Overall Loss 0.017768    Objective Loss 0.017768                                        LR 0.000905    Time 0.012245    
+Epoch: [2][  590/  819]    Overall Loss 0.017767    Objective Loss 0.017767                                        LR 0.000905    Time 0.012226    
+Epoch: [2][  600/  819]    Overall Loss 0.017701    Objective Loss 0.017701                                        LR 0.000905    Time 0.012199    
+Epoch: [2][  610/  819]    Overall Loss 0.017637    Objective Loss 0.017637                                        LR 0.000905    Time 0.012177    
+Epoch: [2][  620/  819]    Overall Loss 0.017679    Objective Loss 0.017679                                        LR 0.000905    Time 0.012147    
+Epoch: [2][  630/  819]    Overall Loss 0.017816    Objective Loss 0.017816                                        LR 0.000905    Time 0.012128    
+Epoch: [2][  640/  819]    Overall Loss 0.017838    Objective Loss 0.017838                                        LR 0.000905    Time 0.012100    
+Epoch: [2][  650/  819]    Overall Loss 0.017946    Objective Loss 0.017946                                        LR 0.000905    Time 0.012081    
+Epoch: [2][  660/  819]    Overall Loss 0.017923    Objective Loss 0.017923                                        LR 0.000905    Time 0.012062    
+Epoch: [2][  670/  819]    Overall Loss 0.017902    Objective Loss 0.017902                                        LR 0.000905    Time 0.012044    
+Epoch: [2][  680/  819]    Overall Loss 0.017899    Objective Loss 0.017899                                        LR 0.000905    Time 0.012020    
+Epoch: [2][  690/  819]    Overall Loss 0.017866    Objective Loss 0.017866                                        LR 0.000905    Time 0.011995    
+Epoch: [2][  700/  819]    Overall Loss 0.017871    Objective Loss 0.017871                                        LR 0.000905    Time 0.011972    
+Epoch: [2][  710/  819]    Overall Loss 0.017782    Objective Loss 0.017782                                        LR 0.000905    Time 0.011959    
+Epoch: [2][  720/  819]    Overall Loss 0.017744    Objective Loss 0.017744                                        LR 0.000905    Time 0.011940    
+Epoch: [2][  730/  819]    Overall Loss 0.017715    Objective Loss 0.017715                                        LR 0.000905    Time 0.011923    
+Epoch: [2][  740/  819]    Overall Loss 0.017721    Objective Loss 0.017721                                        LR 0.000905    Time 0.011911    
+Epoch: [2][  750/  819]    Overall Loss 0.017684    Objective Loss 0.017684                                        LR 0.000905    Time 0.011884    
+Epoch: [2][  760/  819]    Overall Loss 0.017665    Objective Loss 0.017665                                        LR 0.000905    Time 0.011876    
+Epoch: [2][  770/  819]    Overall Loss 0.017733    Objective Loss 0.017733                                        LR 0.000905    Time 0.011859    
+Epoch: [2][  780/  819]    Overall Loss 0.017669    Objective Loss 0.017669                                        LR 0.000905    Time 0.011842    
+Epoch: [2][  790/  819]    Overall Loss 0.017646    Objective Loss 0.017646                                        LR 0.000905    Time 0.011826    
+Epoch: [2][  800/  819]    Overall Loss 0.017631    Objective Loss 0.017631                                        LR 0.000905    Time 0.011808    
+Epoch: [2][  810/  819]    Overall Loss 0.017601    Objective Loss 0.017601                                        LR 0.000905    Time 0.011786    
+Epoch: [2][  819/  819]    Overall Loss 0.017545    Objective Loss 0.017545    Top1 99.776786    LR 0.000905    Time 0.011830    
+--- validate (epoch=2)-----------
+23200 samples (256 per mini-batch)
+Epoch: [2][   10/   91]    Loss 0.206045    Top1 92.265625    
+Epoch: [2][   20/   91]    Loss 0.200929    Top1 92.343750    
+Epoch: [2][   30/   91]    Loss 0.204684    Top1 92.174479    
+Epoch: [2][   40/   91]    Loss 0.211641    Top1 92.041016    
+Epoch: [2][   50/   91]    Loss 0.211019    Top1 92.007812    
+Epoch: [2][   60/   91]    Loss 0.208070    Top1 92.070312    
+Epoch: [2][   70/   91]    Loss 0.205621    Top1 92.176339    
+Epoch: [2][   80/   91]    Loss 0.206064    Top1 92.153320    
+Epoch: [2][   90/   91]    Loss 0.207325    Top1 92.039931    
+Epoch: [2][   91/   91]    Loss 0.207908    Top1 92.017241    
+==> Top1: 92.017    Loss: 0.208
+
+==> Best [Top1: 92.017   Params: 43160 on epoch: 2]
+Saving checkpoint to: /shared/b00090279/testMax/ai8x-training/hawq_qat_frontier_p05/indoor_hawq_qat_seed_42__L21__2_2_2_2___2026.05.17-194328/indoor_hawq_qat_seed_42__L21__2_2_2_2_checkpoint.pth.tar
+
+
+Training epoch: 209600 samples (256 per mini-batch, world size: 1)
+Epoch: [3][   10/  819]    Overall Loss 0.018132    Objective Loss 0.018132                                        LR 0.000796    Time 0.088528    
+Epoch: [3][   20/  819]    Overall Loss 0.016182    Objective Loss 0.016182                                        LR 0.000796    Time 0.049843    
+Epoch: [3][   30/  819]    Overall Loss 0.020099    Objective Loss 0.020099                                        LR 0.000796    Time 0.037159    
+Epoch: [3][   40/  819]    Overall Loss 0.019323    Objective Loss 0.019323                                        LR 0.000796    Time 0.030636    
+Epoch: [3][   50/  819]    Overall Loss 0.018136    Objective Loss 0.018136                                        LR 0.000796    Time 0.026663    
+Epoch: [3][   60/  819]    Overall Loss 0.017283    Objective Loss 0.017283                                        LR 0.000796    Time 0.023993    
+Epoch: [3][   70/  819]    Overall Loss 0.016758    Objective Loss 0.016758                                        LR 0.000796    Time 0.022058    
+Epoch: [3][   80/  819]    Overall Loss 0.015926    Objective Loss 0.015926                                        LR 0.000796    Time 0.020755    
+Epoch: [3][   90/  819]    Overall Loss 0.015630    Objective Loss 0.015630                                        LR 0.000796    Time 0.019583    
+Epoch: [3][  100/  819]    Overall Loss 0.015418    Objective Loss 0.015418                                        LR 0.000796    Time 0.018726    
+Epoch: [3][  110/  819]    Overall Loss 0.015237    Objective Loss 0.015237                                        LR 0.000796    Time 0.017996    
+Epoch: [3][  120/  819]    Overall Loss 0.015076    Objective Loss 0.015076                                        LR 0.000796    Time 0.017420    
+Epoch: [3][  130/  819]    Overall Loss 0.015123    Objective Loss 0.015123                                        LR 0.000796    Time 0.016874    
+Epoch: [3][  140/  819]    Overall Loss 0.014864    Objective Loss 0.014864                                        LR 0.000796    Time 0.016404    
+Epoch: [3][  150/  819]    Overall Loss 0.014813    Objective Loss 0.014813                                        LR 0.000796    Time 0.016016    
+Epoch: [3][  160/  819]    Overall Loss 0.014910    Objective Loss 0.014910                                        LR 0.000796    Time 0.015678    
+Epoch: [3][  170/  819]    Overall Loss 0.014783    Objective Loss 0.014783                                        LR 0.000796    Time 0.015336    
+Epoch: [3][  180/  819]    Overall Loss 0.014669    Objective Loss 0.014669                                        LR 0.000796    Time 0.015092    
+Epoch: [3][  190/  819]    Overall Loss 0.014487    Objective Loss 0.014487                                        LR 0.000796    Time 0.014860    
+Epoch: [3][  200/  819]    Overall Loss 0.014318    Objective Loss 0.014318                                        LR 0.000796    Time 0.014657    
+Epoch: [3][  210/  819]    Overall Loss 0.014252    Objective Loss 0.014252                                        LR 0.000796    Time 0.014452    
+Epoch: [3][  220/  819]    Overall Loss 0.014201    Objective Loss 0.014201                                        LR 0.000796    Time 0.014263    
+Epoch: [3][  230/  819]    Overall Loss 0.014192    Objective Loss 0.014192                                        LR 0.000796    Time 0.014095    
+Epoch: [3][  240/  819]    Overall Loss 0.014283    Objective Loss 0.014283                                        LR 0.000796    Time 0.013970    
+Epoch: [3][  250/  819]    Overall Loss 0.014454    Objective Loss 0.014454                                        LR 0.000796    Time 0.013814    
+Epoch: [3][  260/  819]    Overall Loss 0.014426    Objective Loss 0.014426                                        LR 0.000796    Time 0.013724    
+Epoch: [3][  270/  819]    Overall Loss 0.014435    Objective Loss 0.014435                                        LR 0.000796    Time 0.013587    
+Epoch: [3][  280/  819]    Overall Loss 0.014344    Objective Loss 0.014344                                        LR 0.000796    Time 0.013495    
+Epoch: [3][  290/  819]    Overall Loss 0.014288    Objective Loss 0.014288                                        LR 0.000796    Time 0.013412    
+Epoch: [3][  300/  819]    Overall Loss 0.014240    Objective Loss 0.014240                                        LR 0.000796    Time 0.013312    
+Epoch: [3][  310/  819]    Overall Loss 0.014247    Objective Loss 0.014247                                        LR 0.000796    Time 0.013249    
+Epoch: [3][  320/  819]    Overall Loss 0.014191    Objective Loss 0.014191                                        LR 0.000796    Time 0.013130    
+Epoch: [3][  330/  819]    Overall Loss 0.014083    Objective Loss 0.014083                                        LR 0.000796    Time 0.013078    
+Epoch: [3][  340/  819]    Overall Loss 0.014075    Objective Loss 0.014075                                        LR 0.000796    Time 0.013008    
+Epoch: [3][  350/  819]    Overall Loss 0.013998    Objective Loss 0.013998                                        LR 0.000796    Time 0.012928    
+Epoch: [3][  360/  819]    Overall Loss 0.013893    Objective Loss 0.013893                                        LR 0.000796    Time 0.012876    
+Epoch: [3][  370/  819]    Overall Loss 0.013871    Objective Loss 0.013871                                        LR 0.000796    Time 0.012808    
+Epoch: [3][  380/  819]    Overall Loss 0.013871    Objective Loss 0.013871                                        LR 0.000796    Time 0.012763    
+Epoch: [3][  390/  819]    Overall Loss 0.013802    Objective Loss 0.013802                                        LR 0.000796    Time 0.012693    
+Epoch: [3][  400/  819]    Overall Loss 0.013898    Objective Loss 0.013898                                        LR 0.000796    Time 0.012653    
+Epoch: [3][  410/  819]    Overall Loss 0.013938    Objective Loss 0.013938                                        LR 0.000796    Time 0.012593    
+Epoch: [3][  420/  819]    Overall Loss 0.013872    Objective Loss 0.013872                                        LR 0.000796    Time 0.012546    
+Epoch: [3][  430/  819]    Overall Loss 0.013901    Objective Loss 0.013901                                        LR 0.000796    Time 0.012498    
+Epoch: [3][  440/  819]    Overall Loss 0.013891    Objective Loss 0.013891                                        LR 0.000796    Time 0.012458    
+Epoch: [3][  450/  819]    Overall Loss 0.013937    Objective Loss 0.013937                                        LR 0.000796    Time 0.012410    
+Epoch: [3][  460/  819]    Overall Loss 0.013883    Objective Loss 0.013883                                        LR 0.000796    Time 0.012370    
+Epoch: [3][  470/  819]    Overall Loss 0.013993    Objective Loss 0.013993                                        LR 0.000796    Time 0.012329    
+Epoch: [3][  480/  819]    Overall Loss 0.013955    Objective Loss 0.013955                                        LR 0.000796    Time 0.012304    
+Epoch: [3][  490/  819]    Overall Loss 0.013884    Objective Loss 0.013884                                        LR 0.000796    Time 0.012273    
+Epoch: [3][  500/  819]    Overall Loss 0.013819    Objective Loss 0.013819                                        LR 0.000796    Time 0.012225    
+Epoch: [3][  510/  819]    Overall Loss 0.013746    Objective Loss 0.013746                                        LR 0.000796    Time 0.012198    
+Epoch: [3][  520/  819]    Overall Loss 0.013785    Objective Loss 0.013785                                        LR 0.000796    Time 0.012155    
+Epoch: [3][  530/  819]    Overall Loss 0.013762    Objective Loss 0.013762                                        LR 0.000796    Time 0.012142    
+Epoch: [3][  540/  819]    Overall Loss 0.013755    Objective Loss 0.013755                                        LR 0.000796    Time 0.012100    
+Epoch: [3][  550/  819]    Overall Loss 0.013759    Objective Loss 0.013759                                        LR 0.000796    Time 0.012085    
+Epoch: [3][  560/  819]    Overall Loss 0.013738    Objective Loss 0.013738                                        LR 0.000796    Time 0.012048    
+Epoch: [3][  570/  819]    Overall Loss 0.013656    Objective Loss 0.013656                                        LR 0.000796    Time 0.012029    
+Epoch: [3][  580/  819]    Overall Loss 0.013661    Objective Loss 0.013661                                        LR 0.000796    Time 0.011998    
+Epoch: [3][  590/  819]    Overall Loss 0.013687    Objective Loss 0.013687                                        LR 0.000796    Time 0.011977    
+Epoch: [3][  600/  819]    Overall Loss 0.013679    Objective Loss 0.013679                                        LR 0.000796    Time 0.011961    
+Epoch: [3][  610/  819]    Overall Loss 0.013673    Objective Loss 0.013673                                        LR 0.000796    Time 0.011920    
+Epoch: [3][  620/  819]    Overall Loss 0.013636    Objective Loss 0.013636                                        LR 0.000796    Time 0.011896    
+Epoch: [3][  630/  819]    Overall Loss 0.013690    Objective Loss 0.013690                                        LR 0.000796    Time 0.011883    
+Epoch: [3][  640/  819]    Overall Loss 0.013668    Objective Loss 0.013668                                        LR 0.000796    Time 0.011860    
+Epoch: [3][  650/  819]    Overall Loss 0.013768    Objective Loss 0.013768                                        LR 0.000796    Time 0.011842    
+Epoch: [3][  660/  819]    Overall Loss 0.013793    Objective Loss 0.013793                                        LR 0.000796    Time 0.011831    
+Epoch: [3][  670/  819]    Overall Loss 0.013779    Objective Loss 0.013779                                        LR 0.000796    Time 0.011820    
+Epoch: [3][  680/  819]    Overall Loss 0.013749    Objective Loss 0.013749                                        LR 0.000796    Time 0.011789    
+Epoch: [3][  690/  819]    Overall Loss 0.013767    Objective Loss 0.013767                                        LR 0.000796    Time 0.011781    
+Epoch: [3][  700/  819]    Overall Loss 0.013749    Objective Loss 0.013749                                        LR 0.000796    Time 0.011761    
+Epoch: [3][  710/  819]    Overall Loss 0.013748    Objective Loss 0.013748                                        LR 0.000796    Time 0.011741    
+Epoch: [3][  720/  819]    Overall Loss 0.013778    Objective Loss 0.013778                                        LR 0.000796    Time 0.011728    
+Epoch: [3][  730/  819]    Overall Loss 0.013748    Objective Loss 0.013748                                        LR 0.000796    Time 0.011710    
+Epoch: [3][  740/  819]    Overall Loss 0.013707    Objective Loss 0.013707                                        LR 0.000796    Time 0.011703    
+Epoch: [3][  750/  819]    Overall Loss 0.013687    Objective Loss 0.013687                                        LR 0.000796    Time 0.011688    
+Epoch: [3][  760/  819]    Overall Loss 0.013707    Objective Loss 0.013707                                        LR 0.000796    Time 0.011671    
+Epoch: [3][  770/  819]    Overall Loss 0.013681    Objective Loss 0.013681                                        LR 0.000796    Time 0.011658    
+Epoch: [3][  780/  819]    Overall Loss 0.013644    Objective Loss 0.013644                                        LR 0.000796    Time 0.011649    
+Epoch: [3][  790/  819]    Overall Loss 0.013630    Objective Loss 0.013630                                        LR 0.000796    Time 0.011632    
+Epoch: [3][  800/  819]    Overall Loss 0.013659    Objective Loss 0.013659                                        LR 0.000796    Time 0.011620    
+Epoch: [3][  810/  819]    Overall Loss 0.013604    Objective Loss 0.013604                                        LR 0.000796    Time 0.011612    
+Epoch: [3][  819/  819]    Overall Loss 0.013578    Objective Loss 0.013578    Top1 99.776786    LR 0.000796    Time 0.011654    
+--- validate (epoch=3)-----------
+23200 samples (256 per mini-batch)
+Epoch: [3][   10/   91]    Loss 0.192062    Top1 93.476562    
+Epoch: [3][   20/   91]    Loss 0.190119    Top1 93.183594    
+Epoch: [3][   30/   91]    Loss 0.193708    Top1 93.294271    
+Epoch: [3][   40/   91]    Loss 0.195915    Top1 93.125000    
+Epoch: [3][   50/   91]    Loss 0.204431    Top1 93.000000    
+Epoch: [3][   60/   91]    Loss 0.210136    Top1 92.805990    
+Epoch: [3][   70/   91]    Loss 0.206071    Top1 92.779018    
+Epoch: [3][   80/   91]    Loss 0.207574    Top1 92.753906    
+Epoch: [3][   90/   91]    Loss 0.207354    Top1 92.764757    
+Epoch: [3][   91/   91]    Loss 0.207999    Top1 92.767241    
+==> Top1: 92.767    Loss: 0.208
+
+==> Best [Top1: 92.767   Params: 43160 on epoch: 3]
+Saving checkpoint to: /shared/b00090279/testMax/ai8x-training/hawq_qat_frontier_p05/indoor_hawq_qat_seed_42__L21__2_2_2_2___2026.05.17-194328/indoor_hawq_qat_seed_42__L21__2_2_2_2_checkpoint.pth.tar
+
+
+Training epoch: 209600 samples (256 per mini-batch, world size: 1)
+Epoch: [4][   10/  819]    Overall Loss 0.018882    Objective Loss 0.018882                                        LR 0.000658    Time 0.105516    
+Epoch: [4][   20/  819]    Overall Loss 0.015622    Objective Loss 0.015622                                        LR 0.000658    Time 0.057749    
+Epoch: [4][   30/  819]    Overall Loss 0.014668    Objective Loss 0.014668                                        LR 0.000658    Time 0.042608    
+Epoch: [4][   40/  819]    Overall Loss 0.014736    Objective Loss 0.014736                                        LR 0.000658    Time 0.034607    
+Epoch: [4][   50/  819]    Overall Loss 0.014249    Objective Loss 0.014249                                        LR 0.000658    Time 0.029851    
+Epoch: [4][   60/  819]    Overall Loss 0.014437    Objective Loss 0.014437                                        LR 0.000658    Time 0.026672    
+Epoch: [4][   70/  819]    Overall Loss 0.013907    Objective Loss 0.013907                                        LR 0.000658    Time 0.024444    
+Epoch: [4][   80/  819]    Overall Loss 0.013934    Objective Loss 0.013934                                        LR 0.000658    Time 0.022837    
+Epoch: [4][   90/  819]    Overall Loss 0.014226    Objective Loss 0.014226                                        LR 0.000658    Time 0.021533    
+Epoch: [4][  100/  819]    Overall Loss 0.014020    Objective Loss 0.014020                                        LR 0.000658    Time 0.020479    
+Epoch: [4][  110/  819]    Overall Loss 0.013870    Objective Loss 0.013870                                        LR 0.000658    Time 0.019567    
+Epoch: [4][  120/  819]    Overall Loss 0.013835    Objective Loss 0.013835                                        LR 0.000658    Time 0.018829    
+Epoch: [4][  130/  819]    Overall Loss 0.013702    Objective Loss 0.013702                                        LR 0.000658    Time 0.018222    
+Epoch: [4][  140/  819]    Overall Loss 0.013382    Objective Loss 0.013382                                        LR 0.000658    Time 0.017663    
+Epoch: [4][  150/  819]    Overall Loss 0.013230    Objective Loss 0.013230                                        LR 0.000658    Time 0.017212    
+Epoch: [4][  160/  819]    Overall Loss 0.013056    Objective Loss 0.013056                                        LR 0.000658    Time 0.016783    
+Epoch: [4][  170/  819]    Overall Loss 0.013125    Objective Loss 0.013125                                        LR 0.000658    Time 0.016449    
+Epoch: [4][  180/  819]    Overall Loss 0.013048    Objective Loss 0.013048                                        LR 0.000658    Time 0.016148    
+Epoch: [4][  190/  819]    Overall Loss 0.013104    Objective Loss 0.013104                                        LR 0.000658    Time 0.015814    
+Epoch: [4][  200/  819]    Overall Loss 0.012999    Objective Loss 0.012999                                        LR 0.000658    Time 0.015506    
+Epoch: [4][  210/  819]    Overall Loss 0.012919    Objective Loss 0.012919                                        LR 0.000658    Time 0.015325    
+Epoch: [4][  220/  819]    Overall Loss 0.012929    Objective Loss 0.012929                                        LR 0.000658    Time 0.015106    
+Epoch: [4][  230/  819]    Overall Loss 0.012844    Objective Loss 0.012844                                        LR 0.000658    Time 0.014889    
+Epoch: [4][  240/  819]    Overall Loss 0.012791    Objective Loss 0.012791                                        LR 0.000658    Time 0.014700    
+Epoch: [4][  250/  819]    Overall Loss 0.012640    Objective Loss 0.012640                                        LR 0.000658    Time 0.014555    
+Epoch: [4][  260/  819]    Overall Loss 0.012717    Objective Loss 0.012717                                        LR 0.000658    Time 0.014398    
+Epoch: [4][  270/  819]    Overall Loss 0.012688    Objective Loss 0.012688                                        LR 0.000658    Time 0.014254    
+Epoch: [4][  280/  819]    Overall Loss 0.012623    Objective Loss 0.012623                                        LR 0.000658    Time 0.014127    
+Epoch: [4][  290/  819]    Overall Loss 0.012695    Objective Loss 0.012695                                        LR 0.000658    Time 0.014017    
+Epoch: [4][  300/  819]    Overall Loss 0.012594    Objective Loss 0.012594                                        LR 0.000658    Time 0.013891    
+Epoch: [4][  310/  819]    Overall Loss 0.012588    Objective Loss 0.012588                                        LR 0.000658    Time 0.013768    
+Epoch: [4][  320/  819]    Overall Loss 0.012582    Objective Loss 0.012582                                        LR 0.000658    Time 0.013675    
+Epoch: [4][  330/  819]    Overall Loss 0.012530    Objective Loss 0.012530                                        LR 0.000658    Time 0.013578    
+Epoch: [4][  340/  819]    Overall Loss 0.012492    Objective Loss 0.012492                                        LR 0.000658    Time 0.013487    
+Epoch: [4][  350/  819]    Overall Loss 0.012411    Objective Loss 0.012411                                        LR 0.000658    Time 0.013405    
+Epoch: [4][  360/  819]    Overall Loss 0.012372    Objective Loss 0.012372                                        LR 0.000658    Time 0.013324    
+Epoch: [4][  370/  819]    Overall Loss 0.012378    Objective Loss 0.012378                                        LR 0.000658    Time 0.013254    
+Epoch: [4][  380/  819]    Overall Loss 0.012334    Objective Loss 0.012334                                        LR 0.000658    Time 0.013187    
+Epoch: [4][  390/  819]    Overall Loss 0.012374    Objective Loss 0.012374                                        LR 0.000658    Time 0.013122    
+Epoch: [4][  400/  819]    Overall Loss 0.012422    Objective Loss 0.012422                                        LR 0.000658    Time 0.013047    
+Epoch: [4][  410/  819]    Overall Loss 0.012460    Objective Loss 0.012460                                        LR 0.000658    Time 0.012985    
+Epoch: [4][  420/  819]    Overall Loss 0.012437    Objective Loss 0.012437                                        LR 0.000658    Time 0.012940    
+Epoch: [4][  430/  819]    Overall Loss 0.012415    Objective Loss 0.012415                                        LR 0.000658    Time 0.012876    
+Epoch: [4][  440/  819]    Overall Loss 0.012370    Objective Loss 0.012370                                        LR 0.000658    Time 0.012819    
+Epoch: [4][  450/  819]    Overall Loss 0.012403    Objective Loss 0.012403                                        LR 0.000658    Time 0.012779    
+Epoch: [4][  460/  819]    Overall Loss 0.012348    Objective Loss 0.012348                                        LR 0.000658    Time 0.012731    
+Epoch: [4][  470/  819]    Overall Loss 0.012280    Objective Loss 0.012280                                        LR 0.000658    Time 0.012688    
+Epoch: [4][  480/  819]    Overall Loss 0.012230    Objective Loss 0.012230                                        LR 0.000658    Time 0.012651    
+Epoch: [4][  490/  819]    Overall Loss 0.012180    Objective Loss 0.012180                                        LR 0.000658    Time 0.012602    
+Epoch: [4][  500/  819]    Overall Loss 0.012165    Objective Loss 0.012165                                        LR 0.000658    Time 0.012554    
+Epoch: [4][  510/  819]    Overall Loss 0.012156    Objective Loss 0.012156                                        LR 0.000658    Time 0.012532    
+Epoch: [4][  520/  819]    Overall Loss 0.012180    Objective Loss 0.012180                                        LR 0.000658    Time 0.012487    
+Epoch: [4][  530/  819]    Overall Loss 0.012140    Objective Loss 0.012140                                        LR 0.000658    Time 0.012458    
+Epoch: [4][  540/  819]    Overall Loss 0.012105    Objective Loss 0.012105                                        LR 0.000658    Time 0.012421    
+Epoch: [4][  550/  819]    Overall Loss 0.012085    Objective Loss 0.012085                                        LR 0.000658    Time 0.012386    
+Epoch: [4][  560/  819]    Overall Loss 0.012056    Objective Loss 0.012056                                        LR 0.000658    Time 0.012371    
+Epoch: [4][  570/  819]    Overall Loss 0.012034    Objective Loss 0.012034                                        LR 0.000658    Time 0.012337    
+Epoch: [4][  580/  819]    Overall Loss 0.012033    Objective Loss 0.012033                                        LR 0.000658    Time 0.012305    
+Epoch: [4][  590/  819]    Overall Loss 0.011969    Objective Loss 0.011969                                        LR 0.000658    Time 0.012276    
+Epoch: [4][  600/  819]    Overall Loss 0.011948    Objective Loss 0.011948                                        LR 0.000658    Time 0.012258    
+Epoch: [4][  610/  819]    Overall Loss 0.011908    Objective Loss 0.011908                                        LR 0.000658    Time 0.012226    
+Epoch: [4][  620/  819]    Overall Loss 0.011893    Objective Loss 0.011893                                        LR 0.000658    Time 0.012189    
+Epoch: [4][  630/  819]    Overall Loss 0.011880    Objective Loss 0.011880                                        LR 0.000658    Time 0.012170    
+Epoch: [4][  640/  819]    Overall Loss 0.011851    Objective Loss 0.011851                                        LR 0.000658    Time 0.012140    
+Epoch: [4][  650/  819]    Overall Loss 0.011797    Objective Loss 0.011797                                        LR 0.000658    Time 0.012130    
+Epoch: [4][  660/  819]    Overall Loss 0.011768    Objective Loss 0.011768                                        LR 0.000658    Time 0.012101    
+Epoch: [4][  670/  819]    Overall Loss 0.011786    Objective Loss 0.011786                                        LR 0.000658    Time 0.012078    
+Epoch: [4][  680/  819]    Overall Loss 0.011826    Objective Loss 0.011826                                        LR 0.000658    Time 0.012063    
+Epoch: [4][  690/  819]    Overall Loss 0.011826    Objective Loss 0.011826                                        LR 0.000658    Time 0.012041    
+Epoch: [4][  700/  819]    Overall Loss 0.011839    Objective Loss 0.011839                                        LR 0.000658    Time 0.012010    
+Epoch: [4][  710/  819]    Overall Loss 0.011844    Objective Loss 0.011844                                        LR 0.000658    Time 0.011992    
+Epoch: [4][  720/  819]    Overall Loss 0.011888    Objective Loss 0.011888                                        LR 0.000658    Time 0.011975    
+Epoch: [4][  730/  819]    Overall Loss 0.011899    Objective Loss 0.011899                                        LR 0.000658    Time 0.011960    
+Epoch: [4][  740/  819]    Overall Loss 0.011934    Objective Loss 0.011934                                        LR 0.000658    Time 0.011936    
+Epoch: [4][  750/  819]    Overall Loss 0.011905    Objective Loss 0.011905                                        LR 0.000658    Time 0.011921    
+Epoch: [4][  760/  819]    Overall Loss 0.011873    Objective Loss 0.011873                                        LR 0.000658    Time 0.011904    
+Epoch: [4][  770/  819]    Overall Loss 0.011894    Objective Loss 0.011894                                        LR 0.000658    Time 0.011879    
+Epoch: [4][  780/  819]    Overall Loss 0.011894    Objective Loss 0.011894                                        LR 0.000658    Time 0.011871    
+Epoch: [4][  790/  819]    Overall Loss 0.011869    Objective Loss 0.011869                                        LR 0.000658    Time 0.011853    
+Epoch: [4][  800/  819]    Overall Loss 0.011902    Objective Loss 0.011902                                        LR 0.000658    Time 0.011835    
+Epoch: [4][  810/  819]    Overall Loss 0.011903    Objective Loss 0.011903                                        LR 0.000658    Time 0.011828    
+Epoch: [4][  819/  819]    Overall Loss 0.011951    Objective Loss 0.011951    Top1 99.553571    LR 0.000658    Time 0.011872    
+--- validate (epoch=4)-----------
+23200 samples (256 per mini-batch)
+Epoch: [4][   10/   91]    Loss 0.154706    Top1 94.414062    
+Epoch: [4][   20/   91]    Loss 0.152998    Top1 94.511719    
+Epoch: [4][   30/   91]    Loss 0.155725    Top1 94.440104    
+Epoch: [4][   40/   91]    Loss 0.153845    Top1 94.394531    
+Epoch: [4][   50/   91]    Loss 0.156268    Top1 94.312500    
+Epoch: [4][   60/   91]    Loss 0.156302    Top1 94.212240    
+Epoch: [4][   70/   91]    Loss 0.156869    Top1 94.268973    
+Epoch: [4][   80/   91]    Loss 0.157389    Top1 94.218750    
+Epoch: [4][   90/   91]    Loss 0.157121    Top1 94.262153    
+Epoch: [4][   91/   91]    Loss 0.156809    Top1 94.271552    
+==> Top1: 94.272    Loss: 0.157
+
+==> Best [Top1: 94.272   Params: 43160 on epoch: 4]
+Saving checkpoint to: /shared/b00090279/testMax/ai8x-training/hawq_qat_frontier_p05/indoor_hawq_qat_seed_42__L21__2_2_2_2___2026.05.17-194328/indoor_hawq_qat_seed_42__L21__2_2_2_2_checkpoint.pth.tar
+
+
+Training epoch: 209600 samples (256 per mini-batch, world size: 1)
+Epoch: [5][   10/  819]    Overall Loss 0.008403    Objective Loss 0.008403                                        LR 0.000505    Time 0.091178    
+Epoch: [5][   20/  819]    Overall Loss 0.008015    Objective Loss 0.008015                                        LR 0.000505    Time 0.051226    
+Epoch: [5][   30/  819]    Overall Loss 0.009422    Objective Loss 0.009422                                        LR 0.000505    Time 0.037722    
+Epoch: [5][   40/  819]    Overall Loss 0.009573    Objective Loss 0.009573                                        LR 0.000505    Time 0.031096    
+Epoch: [5][   50/  819]    Overall Loss 0.009736    Objective Loss 0.009736                                        LR 0.000505    Time 0.027011    
+Epoch: [5][   60/  819]    Overall Loss 0.010290    Objective Loss 0.010290                                        LR 0.000505    Time 0.024490    
+Epoch: [5][   70/  819]    Overall Loss 0.010259    Objective Loss 0.010259                                        LR 0.000505    Time 0.022437    
+Epoch: [5][   80/  819]    Overall Loss 0.010061    Objective Loss 0.010061                                        LR 0.000505    Time 0.020992    
+Epoch: [5][   90/  819]    Overall Loss 0.010013    Objective Loss 0.010013                                        LR 0.000505    Time 0.019912    
+Epoch: [5][  100/  819]    Overall Loss 0.009942    Objective Loss 0.009942                                        LR 0.000505    Time 0.018992    
+Epoch: [5][  110/  819]    Overall Loss 0.009810    Objective Loss 0.009810                                        LR 0.000505    Time 0.018233    
+Epoch: [5][  120/  819]    Overall Loss 0.009688    Objective Loss 0.009688                                        LR 0.000505    Time 0.017638    
+Epoch: [5][  130/  819]    Overall Loss 0.009446    Objective Loss 0.009446                                        LR 0.000505    Time 0.017144    
+Epoch: [5][  140/  819]    Overall Loss 0.009440    Objective Loss 0.009440                                        LR 0.000505    Time 0.016650    
+Epoch: [5][  150/  819]    Overall Loss 0.009721    Objective Loss 0.009721                                        LR 0.000505    Time 0.016207    
+Epoch: [5][  160/  819]    Overall Loss 0.009881    Objective Loss 0.009881                                        LR 0.000505    Time 0.015888    
+Epoch: [5][  170/  819]    Overall Loss 0.009735    Objective Loss 0.009735                                        LR 0.000505    Time 0.015583    
+Epoch: [5][  180/  819]    Overall Loss 0.009844    Objective Loss 0.009844                                        LR 0.000505    Time 0.015300    
+Epoch: [5][  190/  819]    Overall Loss 0.010065    Objective Loss 0.010065                                        LR 0.000505    Time 0.015060    
+Epoch: [5][  200/  819]    Overall Loss 0.010088    Objective Loss 0.010088                                        LR 0.000505    Time 0.014856    
+Epoch: [5][  210/  819]    Overall Loss 0.010259    Objective Loss 0.010259                                        LR 0.000505    Time 0.014643    
+Epoch: [5][  220/  819]    Overall Loss 0.010299    Objective Loss 0.010299                                        LR 0.000505    Time 0.014452    
+Epoch: [5][  230/  819]    Overall Loss 0.010396    Objective Loss 0.010396                                        LR 0.000505    Time 0.014243    
+Epoch: [5][  240/  819]    Overall Loss 0.010426    Objective Loss 0.010426                                        LR 0.000505    Time 0.014099    
+Epoch: [5][  250/  819]    Overall Loss 0.010337    Objective Loss 0.010337                                        LR 0.000505    Time 0.013981    
+Epoch: [5][  260/  819]    Overall Loss 0.010366    Objective Loss 0.010366                                        LR 0.000505    Time 0.013812    
+Epoch: [5][  270/  819]    Overall Loss 0.010233    Objective Loss 0.010233                                        LR 0.000505    Time 0.013702    
+Epoch: [5][  280/  819]    Overall Loss 0.010203    Objective Loss 0.010203                                        LR 0.000505    Time 0.013599    
+Epoch: [5][  290/  819]    Overall Loss 0.010169    Objective Loss 0.010169                                        LR 0.000505    Time 0.013489    
+Epoch: [5][  300/  819]    Overall Loss 0.010367    Objective Loss 0.010367                                        LR 0.000505    Time 0.013397    
+Epoch: [5][  310/  819]    Overall Loss 0.010404    Objective Loss 0.010404                                        LR 0.000505    Time 0.013312    
+Epoch: [5][  320/  819]    Overall Loss 0.010354    Objective Loss 0.010354                                        LR 0.000505    Time 0.013228    
+Epoch: [5][  330/  819]    Overall Loss 0.010289    Objective Loss 0.010289                                        LR 0.000505    Time 0.013137    
+Epoch: [5][  340/  819]    Overall Loss 0.010258    Objective Loss 0.010258                                        LR 0.000505    Time 0.013073    
+Epoch: [5][  350/  819]    Overall Loss 0.010209    Objective Loss 0.010209                                        LR 0.000505    Time 0.012997    
+Epoch: [5][  360/  819]    Overall Loss 0.010140    Objective Loss 0.010140                                        LR 0.000505    Time 0.012914    
+Epoch: [5][  370/  819]    Overall Loss 0.010078    Objective Loss 0.010078                                        LR 0.000505    Time 0.012858    
+Epoch: [5][  380/  819]    Overall Loss 0.010020    Objective Loss 0.010020                                        LR 0.000505    Time 0.012794    
+Epoch: [5][  390/  819]    Overall Loss 0.009962    Objective Loss 0.009962                                        LR 0.000505    Time 0.012735    
+Epoch: [5][  400/  819]    Overall Loss 0.009919    Objective Loss 0.009919                                        LR 0.000505    Time 0.012691    
+Epoch: [5][  410/  819]    Overall Loss 0.009901    Objective Loss 0.009901                                        LR 0.000505    Time 0.012633    
+Epoch: [5][  420/  819]    Overall Loss 0.009870    Objective Loss 0.009870                                        LR 0.000505    Time 0.012588    
+Epoch: [5][  430/  819]    Overall Loss 0.009877    Objective Loss 0.009877                                        LR 0.000505    Time 0.012540    
+Epoch: [5][  440/  819]    Overall Loss 0.009909    Objective Loss 0.009909                                        LR 0.000505    Time 0.012499    
+Epoch: [5][  450/  819]    Overall Loss 0.009903    Objective Loss 0.009903                                        LR 0.000505    Time 0.012446    
+Epoch: [5][  460/  819]    Overall Loss 0.009940    Objective Loss 0.009940                                        LR 0.000505    Time 0.012402    
+Epoch: [5][  470/  819]    Overall Loss 0.009880    Objective Loss 0.009880                                        LR 0.000505    Time 0.012387    
+Epoch: [5][  480/  819]    Overall Loss 0.009836    Objective Loss 0.009836                                        LR 0.000505    Time 0.012342    
+Epoch: [5][  490/  819]    Overall Loss 0.009805    Objective Loss 0.009805                                        LR 0.000505    Time 0.012302    
+Epoch: [5][  500/  819]    Overall Loss 0.009788    Objective Loss 0.009788                                        LR 0.000505    Time 0.012263    
+Epoch: [5][  510/  819]    Overall Loss 0.009763    Objective Loss 0.009763                                        LR 0.000505    Time 0.012230    
+Epoch: [5][  520/  819]    Overall Loss 0.009736    Objective Loss 0.009736                                        LR 0.000505    Time 0.012202    
+Epoch: [5][  530/  819]    Overall Loss 0.009723    Objective Loss 0.009723                                        LR 0.000505    Time 0.012165    
+Epoch: [5][  540/  819]    Overall Loss 0.009704    Objective Loss 0.009704                                        LR 0.000505    Time 0.012140    
+Epoch: [5][  550/  819]    Overall Loss 0.009672    Objective Loss 0.009672                                        LR 0.000505    Time 0.012107    
+Epoch: [5][  560/  819]    Overall Loss 0.009681    Objective Loss 0.009681                                        LR 0.000505    Time 0.012080    
+Epoch: [5][  570/  819]    Overall Loss 0.009644    Objective Loss 0.009644                                        LR 0.000505    Time 0.012065    
+Epoch: [5][  580/  819]    Overall Loss 0.009647    Objective Loss 0.009647                                        LR 0.000505    Time 0.012015    
+Epoch: [5][  590/  819]    Overall Loss 0.009624    Objective Loss 0.009624                                        LR 0.000505    Time 0.012009    
+Epoch: [5][  600/  819]    Overall Loss 0.009649    Objective Loss 0.009649                                        LR 0.000505    Time 0.011981    
+Epoch: [5][  610/  819]    Overall Loss 0.009626    Objective Loss 0.009626                                        LR 0.000505    Time 0.011965    
+Epoch: [5][  620/  819]    Overall Loss 0.009582    Objective Loss 0.009582                                        LR 0.000505    Time 0.011937    
+Epoch: [5][  630/  819]    Overall Loss 0.009640    Objective Loss 0.009640                                        LR 0.000505    Time 0.011919    
+Epoch: [5][  640/  819]    Overall Loss 0.009660    Objective Loss 0.009660                                        LR 0.000505    Time 0.011894    
+Epoch: [5][  650/  819]    Overall Loss 0.009699    Objective Loss 0.009699                                        LR 0.000505    Time 0.011879    
+Epoch: [5][  660/  819]    Overall Loss 0.009756    Objective Loss 0.009756                                        LR 0.000505    Time 0.011879    
+Epoch: [5][  670/  819]    Overall Loss 0.009739    Objective Loss 0.009739                                        LR 0.000505    Time 0.011841    
+Epoch: [5][  680/  819]    Overall Loss 0.009731    Objective Loss 0.009731                                        LR 0.000505    Time 0.011837    
+Epoch: [5][  690/  819]    Overall Loss 0.009747    Objective Loss 0.009747                                        LR 0.000505    Time 0.011821    
+Epoch: [5][  700/  819]    Overall Loss 0.009708    Objective Loss 0.009708                                        LR 0.000505    Time 0.011799    
+Epoch: [5][  710/  819]    Overall Loss 0.009738    Objective Loss 0.009738                                        LR 0.000505    Time 0.011781    
+Epoch: [5][  720/  819]    Overall Loss 0.009761    Objective Loss 0.009761                                        LR 0.000505    Time 0.011757    
+Epoch: [5][  730/  819]    Overall Loss 0.009749    Objective Loss 0.009749                                        LR 0.000505    Time 0.011744    
+Epoch: [5][  740/  819]    Overall Loss 0.009778    Objective Loss 0.009778                                        LR 0.000505    Time 0.011720    
+Epoch: [5][  750/  819]    Overall Loss 0.009760    Objective Loss 0.009760                                        LR 0.000505    Time 0.011708    
+Epoch: [5][  760/  819]    Overall Loss 0.009774    Objective Loss 0.009774                                        LR 0.000505    Time 0.011701    
+Epoch: [5][  770/  819]    Overall Loss 0.009758    Objective Loss 0.009758                                        LR 0.000505    Time 0.011688    
+Epoch: [5][  780/  819]    Overall Loss 0.009733    Objective Loss 0.009733                                        LR 0.000505    Time 0.011668    
+Epoch: [5][  790/  819]    Overall Loss 0.009745    Objective Loss 0.009745                                        LR 0.000505    Time 0.011660    
+Epoch: [5][  800/  819]    Overall Loss 0.009760    Objective Loss 0.009760                                        LR 0.000505    Time 0.011647    
+Epoch: [5][  810/  819]    Overall Loss 0.009764    Objective Loss 0.009764                                        LR 0.000505    Time 0.011626    
+Epoch: [5][  819/  819]    Overall Loss 0.009753    Objective Loss 0.009753    Top1 99.776786    LR 0.000505    Time 0.011680    
+--- validate (epoch=5)-----------
+23200 samples (256 per mini-batch)
+Epoch: [5][   10/   91]    Loss 0.185970    Top1 93.476562    
+Epoch: [5][   20/   91]    Loss 0.177978    Top1 93.789062    
+Epoch: [5][   30/   91]    Loss 0.179185    Top1 93.697917    
+Epoch: [5][   40/   91]    Loss 0.181363    Top1 93.564453    
+Epoch: [5][   50/   91]    Loss 0.179433    Top1 93.554688    
+Epoch: [5][   60/   91]    Loss 0.179238    Top1 93.574219    
+Epoch: [5][   70/   91]    Loss 0.178723    Top1 93.610491    
+Epoch: [5][   80/   91]    Loss 0.177991    Top1 93.588867    
+Epoch: [5][   90/   91]    Loss 0.177198    Top1 93.624132    
+Epoch: [5][   91/   91]    Loss 0.177753    Top1 93.620690    
+==> Top1: 93.621    Loss: 0.178
+
+==> Best [Top1: 94.272   Params: 43160 on epoch: 4]
+Saving checkpoint to: /shared/b00090279/testMax/ai8x-training/hawq_qat_frontier_p05/indoor_hawq_qat_seed_42__L21__2_2_2_2___2026.05.17-194328/indoor_hawq_qat_seed_42__L21__2_2_2_2_checkpoint.pth.tar
+
+
+Training epoch: 209600 samples (256 per mini-batch, world size: 1)
+Epoch: [6][   10/  819]    Overall Loss 0.007650    Objective Loss 0.007650                                        LR 0.000352    Time 0.092366    
+Epoch: [6][   20/  819]    Overall Loss 0.008347    Objective Loss 0.008347                                        LR 0.000352    Time 0.051665    
+Epoch: [6][   30/  819]    Overall Loss 0.008515    Objective Loss 0.008515                                        LR 0.000352    Time 0.038341    
+Epoch: [6][   40/  819]    Overall Loss 0.008629    Objective Loss 0.008629                                        LR 0.000352    Time 0.031285    
+Epoch: [6][   50/  819]    Overall Loss 0.009066    Objective Loss 0.009066                                        LR 0.000352    Time 0.027235    
+Epoch: [6][   60/  819]    Overall Loss 0.008753    Objective Loss 0.008753                                        LR 0.000352    Time 0.024671    
+Epoch: [6][   70/  819]    Overall Loss 0.009255    Objective Loss 0.009255                                        LR 0.000352    Time 0.022612    
+Epoch: [6][   80/  819]    Overall Loss 0.009063    Objective Loss 0.009063                                        LR 0.000352    Time 0.021222    
+Epoch: [6][   90/  819]    Overall Loss 0.009172    Objective Loss 0.009172                                        LR 0.000352    Time 0.020117    
+Epoch: [6][  100/  819]    Overall Loss 0.009116    Objective Loss 0.009116                                        LR 0.000352    Time 0.019158    
+Epoch: [6][  110/  819]    Overall Loss 0.009021    Objective Loss 0.009021                                        LR 0.000352    Time 0.018542    
+Epoch: [6][  120/  819]    Overall Loss 0.008937    Objective Loss 0.008937                                        LR 0.000352    Time 0.018172    
+Epoch: [6][  130/  819]    Overall Loss 0.008842    Objective Loss 0.008842                                        LR 0.000352    Time 0.017796    
+Epoch: [6][  140/  819]    Overall Loss 0.008842    Objective Loss 0.008842                                        LR 0.000352    Time 0.017378    
+Epoch: [6][  150/  819]    Overall Loss 0.008830    Objective Loss 0.008830                                        LR 0.000352    Time 0.016899    
+Epoch: [6][  160/  819]    Overall Loss 0.008896    Objective Loss 0.008896                                        LR 0.000352    Time 0.016491    
+Epoch: [6][  170/  819]    Overall Loss 0.008770    Objective Loss 0.008770                                        LR 0.000352    Time 0.016188    
+Epoch: [6][  180/  819]    Overall Loss 0.008826    Objective Loss 0.008826                                        LR 0.000352    Time 0.015870    
+Epoch: [6][  190/  819]    Overall Loss 0.008834    Objective Loss 0.008834                                        LR 0.000352    Time 0.015579    
+Epoch: [6][  200/  819]    Overall Loss 0.008793    Objective Loss 0.008793                                        LR 0.000352    Time 0.015343    
+Epoch: [6][  210/  819]    Overall Loss 0.008708    Objective Loss 0.008708                                        LR 0.000352    Time 0.015093    
+Epoch: [6][  220/  819]    Overall Loss 0.008865    Objective Loss 0.008865                                        LR 0.000352    Time 0.014909    
+Epoch: [6][  230/  819]    Overall Loss 0.008868    Objective Loss 0.008868                                        LR 0.000352    Time 0.014728    
+Epoch: [6][  240/  819]    Overall Loss 0.008857    Objective Loss 0.008857                                        LR 0.000352    Time 0.014532    
+Epoch: [6][  250/  819]    Overall Loss 0.008759    Objective Loss 0.008759                                        LR 0.000352    Time 0.014392    
+Epoch: [6][  260/  819]    Overall Loss 0.008730    Objective Loss 0.008730                                        LR 0.000352    Time 0.014242    
+Epoch: [6][  270/  819]    Overall Loss 0.008708    Objective Loss 0.008708                                        LR 0.000352    Time 0.014104    
+Epoch: [6][  280/  819]    Overall Loss 0.008681    Objective Loss 0.008681                                        LR 0.000352    Time 0.013974    
+Epoch: [6][  290/  819]    Overall Loss 0.008730    Objective Loss 0.008730                                        LR 0.000352    Time 0.013852    
+Epoch: [6][  300/  819]    Overall Loss 0.008748    Objective Loss 0.008748                                        LR 0.000352    Time 0.013757    
+Epoch: [6][  310/  819]    Overall Loss 0.008691    Objective Loss 0.008691                                        LR 0.000352    Time 0.013654    
+Epoch: [6][  320/  819]    Overall Loss 0.008608    Objective Loss 0.008608                                        LR 0.000352    Time 0.013558    
+Epoch: [6][  330/  819]    Overall Loss 0.008593    Objective Loss 0.008593                                        LR 0.000352    Time 0.013485    
+Epoch: [6][  340/  819]    Overall Loss 0.008725    Objective Loss 0.008725                                        LR 0.000352    Time 0.013381    
+Epoch: [6][  350/  819]    Overall Loss 0.008719    Objective Loss 0.008719                                        LR 0.000352    Time 0.013288    
+Epoch: [6][  360/  819]    Overall Loss 0.008729    Objective Loss 0.008729                                        LR 0.000352    Time 0.013214    
+Epoch: [6][  370/  819]    Overall Loss 0.008760    Objective Loss 0.008760                                        LR 0.000352    Time 0.013143    
+Epoch: [6][  380/  819]    Overall Loss 0.008839    Objective Loss 0.008839                                        LR 0.000352    Time 0.013070    
+Epoch: [6][  390/  819]    Overall Loss 0.008815    Objective Loss 0.008815                                        LR 0.000352    Time 0.013011    
+Epoch: [6][  400/  819]    Overall Loss 0.008764    Objective Loss 0.008764                                        LR 0.000352    Time 0.012945    
+Epoch: [6][  410/  819]    Overall Loss 0.008780    Objective Loss 0.008780                                        LR 0.000352    Time 0.012906    
+Epoch: [6][  420/  819]    Overall Loss 0.008755    Objective Loss 0.008755                                        LR 0.000352    Time 0.012847    
+Epoch: [6][  430/  819]    Overall Loss 0.008748    Objective Loss 0.008748                                        LR 0.000352    Time 0.012791    
+Epoch: [6][  440/  819]    Overall Loss 0.008700    Objective Loss 0.008700                                        LR 0.000352    Time 0.012739    
+Epoch: [6][  450/  819]    Overall Loss 0.008671    Objective Loss 0.008671                                        LR 0.000352    Time 0.012685    
+Epoch: [6][  460/  819]    Overall Loss 0.008646    Objective Loss 0.008646                                        LR 0.000352    Time 0.012649    
+Epoch: [6][  470/  819]    Overall Loss 0.008662    Objective Loss 0.008662                                        LR 0.000352    Time 0.012612    
+Epoch: [6][  480/  819]    Overall Loss 0.008686    Objective Loss 0.008686                                        LR 0.000352    Time 0.012562    
+Epoch: [6][  490/  819]    Overall Loss 0.008655    Objective Loss 0.008655                                        LR 0.000352    Time 0.012523    
+Epoch: [6][  500/  819]    Overall Loss 0.008664    Objective Loss 0.008664                                        LR 0.000352    Time 0.012487    
+Epoch: [6][  510/  819]    Overall Loss 0.008619    Objective Loss 0.008619                                        LR 0.000352    Time 0.012446    
+Epoch: [6][  520/  819]    Overall Loss 0.008586    Objective Loss 0.008586                                        LR 0.000352    Time 0.012417    
+Epoch: [6][  530/  819]    Overall Loss 0.008562    Objective Loss 0.008562                                        LR 0.000352    Time 0.012377    
+Epoch: [6][  540/  819]    Overall Loss 0.008536    Objective Loss 0.008536                                        LR 0.000352    Time 0.012331    
+Epoch: [6][  550/  819]    Overall Loss 0.008543    Objective Loss 0.008543                                        LR 0.000352    Time 0.012331    
+Epoch: [6][  560/  819]    Overall Loss 0.008555    Objective Loss 0.008555                                        LR 0.000352    Time 0.012294    
+Epoch: [6][  570/  819]    Overall Loss 0.008556    Objective Loss 0.008556                                        LR 0.000352    Time 0.012261    
+Epoch: [6][  580/  819]    Overall Loss 0.008549    Objective Loss 0.008549                                        LR 0.000352    Time 0.012233    
+Epoch: [6][  590/  819]    Overall Loss 0.008553    Objective Loss 0.008553                                        LR 0.000352    Time 0.012213    
+Epoch: [6][  600/  819]    Overall Loss 0.008533    Objective Loss 0.008533                                        LR 0.000352    Time 0.012175    
+Epoch: [6][  610/  819]    Overall Loss 0.008544    Objective Loss 0.008544                                        LR 0.000352    Time 0.012152    
+Epoch: [6][  620/  819]    Overall Loss 0.008539    Objective Loss 0.008539                                        LR 0.000352    Time 0.012132    
+Epoch: [6][  630/  819]    Overall Loss 0.008538    Objective Loss 0.008538                                        LR 0.000352    Time 0.012098    
+Epoch: [6][  640/  819]    Overall Loss 0.008564    Objective Loss 0.008564                                        LR 0.000352    Time 0.012076    
+Epoch: [6][  650/  819]    Overall Loss 0.008561    Objective Loss 0.008561                                        LR 0.000352    Time 0.012061    
+Epoch: [6][  660/  819]    Overall Loss 0.008536    Objective Loss 0.008536                                        LR 0.000352    Time 0.012038    
+Epoch: [6][  670/  819]    Overall Loss 0.008509    Objective Loss 0.008509                                        LR 0.000352    Time 0.012017    
+Epoch: [6][  680/  819]    Overall Loss 0.008531    Objective Loss 0.008531                                        LR 0.000352    Time 0.011981    
+Epoch: [6][  690/  819]    Overall Loss 0.008531    Objective Loss 0.008531                                        LR 0.000352    Time 0.011975    
+Epoch: [6][  700/  819]    Overall Loss 0.008553    Objective Loss 0.008553                                        LR 0.000352    Time 0.011956    
+Epoch: [6][  710/  819]    Overall Loss 0.008551    Objective Loss 0.008551                                        LR 0.000352    Time 0.011924    
+Epoch: [6][  720/  819]    Overall Loss 0.008549    Objective Loss 0.008549                                        LR 0.000352    Time 0.011917    
+Epoch: [6][  730/  819]    Overall Loss 0.008601    Objective Loss 0.008601                                        LR 0.000352    Time 0.011902    
+Epoch: [6][  740/  819]    Overall Loss 0.008584    Objective Loss 0.008584                                        LR 0.000352    Time 0.011888    
+Epoch: [6][  750/  819]    Overall Loss 0.008610    Objective Loss 0.008610                                        LR 0.000352    Time 0.011868    
+Epoch: [6][  760/  819]    Overall Loss 0.008650    Objective Loss 0.008650                                        LR 0.000352    Time 0.011850    
+Epoch: [6][  770/  819]    Overall Loss 0.008699    Objective Loss 0.008699                                        LR 0.000352    Time 0.011833    
+Epoch: [6][  780/  819]    Overall Loss 0.008688    Objective Loss 0.008688                                        LR 0.000352    Time 0.011820    
+Epoch: [6][  790/  819]    Overall Loss 0.008680    Objective Loss 0.008680                                        LR 0.000352    Time 0.011804    
