@@ -82,7 +82,7 @@ POLICY_DIR.mkdir(parents=True, exist_ok=True)
 def build_env() -> dict[str, str]:
     env = os.environ.copy()
     distiller_path = str(REPO_ROOT / "distiller")
-    env["PYTHONPATH"] = f"{distiller_path}:{env.get('PYTHONPATH', '')}"
+    env["PYTHONPATH"] = f"{REPO_ROOT}:{distiller_path}:{env.get('PYTHONPATH', '')}"
     if torch.cuda.is_available():
         env["CUDA_VISIBLE_DEVICES"] = "0"
     return env

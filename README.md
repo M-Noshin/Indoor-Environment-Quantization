@@ -218,28 +218,33 @@ ai8x_seed_runs_out/
 
 ### 5.2 HAWQ-Reduced QAT Sweep
 
-Script: `training/train_indoor_1D_hawq_qat_sweep.py`
+Script (in this repo): [`training/train_indoor_1D_hawq_qat_sweep.py`](training/train_indoor_1D_hawq_qat_sweep.py)
 
 What it does:
 
 * Consumes HAWQ-retained candidates from `export_hawq_candidates.py`.
-* Runs the same QAT, quantization, and evaluation flow used by the exhaustive sweep.
-* Writes `hawq_qat_sweep_results.csv` and `hawq_qat_sweep_summary.csv`.
+* Runs QAT training, `quantize.py`, and eval from **inside the ai8x-training tree** (same layout as upstream `train.py`).
+* Writes `hawq_qat_sweep_results.csv` and `hawq_qat_sweep_summary.csv` under `--out-dir` (default relative paths resolve under **ai8x-training**, not under this repository).
 
-This follows the same overlay model as the other training scripts:
+**Layout:** copy the sweep driver into the **root of ai8x-training** (the directory that contains `train.py`). The script assumes **`ai8x-synthesis` is a sibling folder of `ai8x-training`** (e.g. `…/testMax/ai8x-training` and `…/testMax/ai8x-synthesis`) so it can find `quantize.py`.
 
-- keep this repository as the source of the HAWQ JSONs and helper scripts
-- copy [train_indoor_1D_hawq_qat_sweep.py](/Users/hamza/Documents/GitHub/Indoor-Environment-Quantization/training/train_indoor_1D_hawq_qat_sweep.py) into your `ai8x-training` root
-- run the reduced QAT sweep from inside `ai8x-training`
-- the output folder will be created inside `ai8x-training`, not inside this repository
-
-Set up the HAWQ frontier candidates from the indoor repo:
+**One-time (or after editing the script here):**
 
 ```bash
-cd Indoor-Environment-Quantization
+export HAWQ_REPO_ROOT=/path/to/Indoor-Environment-Quantization   # e.g. …/Indoor-Environment-Quantization
+export AI8X_TRAINING_ROOT=/path/to/ai8x-training                 # e.g. …/testMax/ai8x-training
 
+cp "${HAWQ_REPO_ROOT}/training/train_indoor_1D_hawq_qat_sweep.py" "${AI8X_TRAINING_ROOT}/"
+```
+
+**1) Export frontier candidates** (from this repo, `max` env):
+
+```bash
 eval "$(conda shell.bash hook)"
 conda activate max
+
+export HAWQ_REPO_ROOT=/path/to/Indoor-Environment-Quantization
+cd "${HAWQ_REPO_ROOT}" || exit 1
 
 ALPHAS=(101 91 81 71 61 51 41 31 21 11 5)
 HAWQ_DIR=hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto_seed42
@@ -254,12 +259,14 @@ python hawqv2/tools/export_hawq_candidates.py \
   --output "${HAWQ_DIR}/hawq_frontier_candidates.csv"
 ```
 
-Then switch to `ai8x-training` and dry-run the reduced QAT sweep:
+**2) Dry-run then run the sweep** (from **ai8x-training**; uses the CSV path inside `HAWQ_REPO_ROOT`):
 
 ```bash
-cd /path/to/ai8x-training
+export HAWQ_REPO_ROOT=/path/to/Indoor-Environment-Quantization
+export AI8X_TRAINING_ROOT=/path/to/ai8x-training
+ALPHAS=(101 91 81 71 61 51 41 31 21 11 5)
 
-HAWQ_REPO_ROOT=/path/to/Indoor-Environment-Quantization
+cd "${AI8X_TRAINING_ROOT}" || exit 1
 
 python -u train_indoor_1D_hawq_qat_sweep.py \
   --configs-csv "${HAWQ_REPO_ROOT}/hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto_seed42/hawq_frontier_candidates.csv" \
@@ -271,11 +278,8 @@ python -u train_indoor_1D_hawq_qat_sweep.py \
   --z-score 2.0 \
   --out-dir hawq_qat_frontier_out \
   --dry-run
-```
 
-Run the actual reduced QAT sweep by removing `--dry-run`:
-
-```bash
+# Full run: remove --dry-run when ready
 python -u train_indoor_1D_hawq_qat_sweep.py \
   --configs-csv "${HAWQ_REPO_ROOT}/hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto_seed42/hawq_frontier_candidates.csv" \
   --input-lengths "${ALPHAS[@]}" \
@@ -287,14 +291,30 @@ python -u train_indoor_1D_hawq_qat_sweep.py \
   --out-dir hawq_qat_frontier_out
 ```
 
-Then apply ACE to the reduced QAT summary, not to the exhaustive QAT sweep:
+**Quick sanity check** (single length, one seed, still from `AI8X_TRAINING_ROOT`):
 
 ```bash
-cd "${HAWQ_REPO_ROOT}"
+cd "${AI8X_TRAINING_ROOT}" || exit 1
+python -u train_indoor_1D_hawq_qat_sweep.py \
+  --configs-csv "${HAWQ_REPO_ROOT}/hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto_seed42/hawq_frontier_candidates.csv" \
+  --input-lengths 101 \
+  --num-seeds 1 \
+  --start-seed 42 \
+  --workers 0 \
+  --epochs 10 \
+  --z-score 2.0 \
+  --out-dir hawq_qat_frontier_out \
+  --dry-run
+```
+
+**3) ACE on the reduced QAT summary** (back in this repo; rebuild `ITEMS` as in step 1 if you opened a new shell):
+
+```bash
+cd "${HAWQ_REPO_ROOT}" || exit 1
 
 python hawqv2/tools/select_ace_from_hawq.py \
   "${ITEMS[@]}" \
-  --eval-csv /path/to/ai8x-training/hawq_qat_frontier_out/hawq_qat_sweep_summary.csv \
+  --eval-csv "${AI8X_TRAINING_ROOT}/hawq_qat_frontier_out/hawq_qat_sweep_summary.csv" \
   --eval-source-label QAT \
   --candidate-set frontier \
   --target-acc 99.2 \
