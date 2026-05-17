@@ -289,7 +289,7 @@ python -u training/train_indoor_1D_hawq_qat_sweep.py \
   --input-lengths 91 \
   --num-seeds 5 \
   --start-seed 42 \
-  --workers 0 \
+  --workers 4 \
   --epochs 10 \
   --z-score 2.0 \
   --out-dir hawq_qat_frontier_L91
@@ -399,7 +399,7 @@ python -u training/train_indoor_1D_hawq_qat_sweep.py \
   --input-lengths 101 91 81 71 61 51 41 31 21 11 5 \
   --num-seeds 5 \
   --start-seed 42 \
-  --workers 0 \
+  --workers 4 \
   --epochs 10 \
   --z-score 2.0 \
   --out-dir hawq_qat_frontier
