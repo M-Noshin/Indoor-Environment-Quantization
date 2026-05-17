@@ -1,0 +1,5 @@
+2026-05-17 22:05:06,049 - Log file for this run: /Users/hamza/Documents/GitHub/Indoor-Environment-Quantization/training/ptq_hawq_frontier_out/indoor_ptq_L31_seed42_8_4_2_8_eval___2026.05.17-220506/indoor_ptq_L31_seed42_8_4_2_8_eval___2026.05.17-220506.log
+2026-05-17 22:05:06,050 - Configuring device: MAX78002, simulate=True.
+2026-05-17 22:05:06,078 - No CUDA, ROCm, or MPS hardware acceleration, training will be slow
+2026-05-17 22:05:06,084 - 
+2026-05-17 22:05:06,084 - Log file for this run: /Users/hamza/Documents/GitHub/Indoor-Environment-Quantization/training/ptq_hawq_frontier_out/indoor_ptq_L31_seed42_8_4_2_8_eval___2026.05.17-220506/indoor_ptq_L31_seed42_8_4_2_8_eval___2026.05.17-220506.log

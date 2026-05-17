@@ -146,7 +146,7 @@ def train_float_model(in_len, seed, all_results):
     """
     run_name = f"indoor_ptq_mixed_float_seed_{seed}_L{in_len}"
     train_log = LOGS_DIR / f"train_float_L{in_len}_seed_{seed}.log"
-    
+
     train_cmd = [
         PYTHON_EXECUTABLE, 'train.py',
         '--epochs', str(args.epochs),
@@ -166,23 +166,22 @@ def train_float_model(in_len, seed, all_results):
         '--seed', str(seed),
         '--name', run_name,
     ]
-    
+
     print(f"\n{'='*80}")
     print(f"Training FLOAT model: L={in_len}, seed={seed}")
     print(f"{'='*80}")
-    
+
     try:
         run_cmd_tee(train_cmd, train_log, REPO_ROOT, env)
     except subprocess.CalledProcessError as e:
         print(f"ERROR: Float training failed (L={in_len}, seed={seed}) code={e.returncode}")
         return None
-    
-    # Find best checkpoint
+
     run_dirs = sorted(glob.glob(str(OUTPUT_DIR / f"{run_name}*")))
     if not run_dirs:
         print(f"WARNING: No run directory found for {run_name}")
         return None
-    
+
     run_dir = Path(run_dirs[-1])
     best_ckpt = None
     for pat in ["*best*.pth.tar", "*checkpoint*.pth.tar"]:
@@ -190,16 +189,15 @@ def train_float_model(in_len, seed, all_results):
         if found:
             best_ckpt = sorted(found)[-1]
             break
-    
+
     if not best_ckpt or not best_ckpt.exists():
         print(f"WARNING: Best checkpoint not found in {run_dir}")
         return None
-    
-    # Copy to dedicated float models directory for clarity
+
     dest = FLOAT_MODELS_DIR / f"{run_name}_best.pth.tar"
     shutil.copy2(best_ckpt, dest)
     print(f"✓ Float model saved: {dest.name}")
-    
+
     return str(dest)
 
 
@@ -208,19 +206,16 @@ def apply_ptq_config(float_ckpt, in_len, seed, cfg_bits, cfg_name, all_results):
     Steps 2-4: Calibrate → Quantize → Evaluate for one PTQ config.
     """
     start_time = time.time()
-    
-    # Unique names
+
     cfg_str = f"{cfg_bits[0]}_{cfg_bits[1]}_{cfg_bits[2]}_{cfg_bits[3]}"
     base_name = f"indoor_ptq_L{in_len}_seed{seed}_{cfg_str}"
-    
-    # Step 2: Generate QAT policy
+
     policy_file = POLICY_DIR / f"qat_policy_L{in_len}_seed{seed}_{cfg_str}.yaml"
     write_policy_yaml(policy_file, cfg_bits, args.z_score)
-    
-    # Step 3: Calibrate
+
     calib_ckpt = CHECKPOINTS_DIR / f"{base_name}_calibrated.pth.tar"
     calib_log = LOGS_DIR / f"calib_{base_name}.log"
-    
+
     calib_cmd = [
         PYTHON_EXECUTABLE, str(CALIBRATE_PY),
         '--checkpoint', float_ckpt,
@@ -235,7 +230,7 @@ def apply_ptq_config(float_ckpt, in_len, seed, cfg_bits, cfg_name, all_results):
         '--calib-split', args.calib_split,
         '--qat-policy', str(policy_file),
     ]
-    
+
     print(f"  Calibrating {cfg_name}...")
     try:
         run_cmd_tee(calib_cmd, calib_log, REPO_ROOT, env)
@@ -249,17 +244,16 @@ def apply_ptq_config(float_ckpt, in_len, seed, cfg_bits, cfg_name, all_results):
             'time_seconds': time.time() - start_time
         })
         return all_results
-    
-    # Step 4: Quantize
+
     quant_ckpt = CHECKPOINTS_DIR / f"{base_name}_quantized.pth.tar"
     quant_log = LOGS_DIR / f"quant_{base_name}.log"
-    
+
     quant_cmd = [
         PYTHON_EXECUTABLE, str(QUANTIZE_PY),
         str(calib_ckpt), str(quant_ckpt),
         '--device', args.device, '-v'
     ]
-    
+
     print(f"  Quantizing {cfg_name}...")
     try:
         run_cmd_tee(quant_cmd, quant_log, REPO_ROOT, env)
@@ -273,10 +267,9 @@ def apply_ptq_config(float_ckpt, in_len, seed, cfg_bits, cfg_name, all_results):
             'time_seconds': time.time() - start_time
         })
         return all_results
-    
-    # Step 5: Evaluate
+
     eval_log = LOGS_DIR / f"eval_{base_name}.log"
-    
+
     eval_cmd = [
         PYTHON_EXECUTABLE, 'train.py',
         '--deterministic',
@@ -296,7 +289,7 @@ def apply_ptq_config(float_ckpt, in_len, seed, cfg_bits, cfg_name, all_results):
         '--seed', str(seed),
         '--name', f"{base_name}_eval",
     ]
-    
+
     print(f"  Evaluating {cfg_name}...")
     try:
         run_cmd_tee(eval_cmd, eval_log, REPO_ROOT, env)
@@ -310,14 +303,13 @@ def apply_ptq_config(float_ckpt, in_len, seed, cfg_bits, cfg_name, all_results):
             'time_seconds': time.time() - start_time
         })
         return all_results
-    
-    # Extract accuracy
+
     test_acc = extract_metric_from_log(
         eval_log,
         [r"==>\s*Top1:\s*(\d+\.?\d*)", r"Test.*?Top1.*?(\d+\.?\d*)",
          r"Prec@1\s+(\d+\.?\d*)", r"Test.*?Accuracy.*?(\d+\.?\d*)"],
     )
-    
+
     elapsed = time.time() - start_time
     all_results.append({
         'input_length': in_len,
@@ -329,12 +321,11 @@ def apply_ptq_config(float_ckpt, in_len, seed, cfg_bits, cfg_name, all_results):
         'time_seconds': elapsed,
         'status': 'success' if test_acc is not None else 'no_metric',
     })
-    
+
     print(f"  ✓ {cfg_name}: {test_acc:.2f}% (took {elapsed:.1f}s)")
-    
-    # Rolling save
+
     save_results(all_results)
-    
+
     return all_results
 
 
@@ -342,7 +333,7 @@ def save_results(all_results):
     """Save detailed and summary results to CSV."""
     df = pd.DataFrame(all_results)
     df.to_csv(OUTPUT_DIR / 'ptq_mixed_sweep_results.csv', index=False)
-    
+
     succ = df[df['status'] == 'success']
     if len(succ) > 0:
         summary = succ.groupby(['input_length', 'config']).agg(
@@ -386,44 +377,38 @@ print('=' * 80)
 env = build_env()
 all_results = []
 
-# Main loop
 for in_len in INPUT_LENGTHS:
     print(f"\n{'#'*80}")
     print(f"INPUT LENGTH: {in_len}")
     print(f"{'#'*80}")
-    
+
     for seed in SEEDS:
         print(f"\n{'-'*80}")
         print(f"SEED: {seed} (Length: {in_len})")
         print(f"{'-'*80}")
-        
-        # Step 1: Train float model (or find existing)
+
         if not args.skip_train:
             float_ckpt = train_float_model(in_len, seed, all_results)
         else:
-            # Look for existing float model
             float_ckpt = FLOAT_MODELS_DIR / f"indoor_ptq_mixed_float_seed_{seed}_L{in_len}_best.pth.tar"
             if not float_ckpt.exists():
                 print(f"ERROR: --skip-train specified but float model not found: {float_ckpt}")
                 continue
             float_ckpt = str(float_ckpt)
             print(f"Using existing float model: {Path(float_ckpt).name}")
-        
+
         if not float_ckpt:
             print(f"Skipping all PTQ configs for seed={seed}, L={in_len} (no float model)")
             continue
-        
-        # Step 2: Apply all 81 PTQ configs
+
         print(f"\nApplying {len(CONFIGS)} PTQ configs to seed={seed}, L={in_len}...")
         for cfg_idx, cfg_bits in enumerate(CONFIGS, 1):
             cfg_name = config_name(cfg_bits)
             print(f"\n[{cfg_idx}/{len(CONFIGS)}] {cfg_name}")
             all_results = apply_ptq_config(float_ckpt, in_len, seed, cfg_bits, cfg_name, all_results)
 
-# Final save
 save_results(all_results)
 
-# Print summary
 print('\n' + '=' * 80)
 print('PTQ Mixed-Precision Sweep COMPLETED!')
 print('=' * 80)
@@ -433,7 +418,7 @@ if len(df) > 0:
     summary_df = pd.read_csv(OUTPUT_DIR / 'ptq_mixed_sweep_summary.csv')
     print("\nTop 20 configurations by accuracy:")
     print(summary_df.head(20).to_string(index=False))
-    
+
     print(f"\n✓ Results saved:")
     print(f"  - {OUTPUT_DIR / 'ptq_mixed_sweep_results.csv'}")
     print(f"  - {OUTPUT_DIR / 'ptq_mixed_sweep_summary.csv'}")

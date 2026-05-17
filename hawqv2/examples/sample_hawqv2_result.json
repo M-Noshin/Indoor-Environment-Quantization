@@ -1,0 +1,14 @@
+{
+  "method": "hawqv2_weight_only",
+  "selected_config": {
+    "layer_bits": {
+      "conv1": 2,
+      "conv2": 4,
+      "fc1": 8,
+      "fc2": 2
+    },
+    "metric": 0.123,
+    "compression_ratio": 1.67,
+    "bit_complexity": 4321.0
+  }
+}

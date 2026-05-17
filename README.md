@@ -216,9 +216,100 @@ ai8x_seed_runs_out/
 └── mixed_precision_sweep_summary.csv
 ```
 
-### 5.2 PTQ Mixed-Precision Sweep
+### 5.2 HAWQ-Reduced QAT Sweep
+
+Script: `training/train_indoor_1D_hawq_qat_sweep.py`
+
+What it does:
+
+* Consumes HAWQ-retained candidates from `export_hawq_candidates.py`.
+* Runs the same QAT, quantization, and evaluation flow used by the exhaustive sweep.
+* Writes `hawq_qat_sweep_results.csv` and `hawq_qat_sweep_summary.csv`.
+
+Setup and export the HAWQ frontier candidates:
+
+```bash
+cd Indoor-Environment-Quantization
+
+eval "$(conda shell.bash hook)"
+conda activate max
+
+AI8X_TRAINING_ROOT=/path/to/ai8x-training
+AI8X_SYNTHESIS_ROOT=/path/to/ai8x-synthesis
+
+ALPHAS=(101 91 81 71 61 51 41 31 21 11 5)
+HAWQ_DIR=hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto_seed42
+ITEMS=()
+for A in "${ALPHAS[@]}"; do
+  ITEMS+=(--item "${A}:${HAWQ_DIR}/results/L${A}.json")
+done
+
+python hawqv2/tools/export_hawq_candidates.py \
+  "${ITEMS[@]}" \
+  --candidate-set frontier \
+  --output "${HAWQ_DIR}/hawq_frontier_candidates.csv"
+```
+
+Dry-run the reduced QAT sweep first:
+
+```bash
+python -u training/train_indoor_1D_hawq_qat_sweep.py \
+  --ai8x-training-root "${AI8X_TRAINING_ROOT}" \
+  --ai8x-synthesis-root "${AI8X_SYNTHESIS_ROOT}" \
+  --configs-csv "${HAWQ_DIR}/hawq_frontier_candidates.csv" \
+  --input-lengths "${ALPHAS[@]}" \
+  --num-seeds 5 \
+  --start-seed 42 \
+  --workers 0 \
+  --epochs 10 \
+  --z-score 2.0 \
+  --out-dir hawq_qat_frontier_out \
+  --dry-run
+```
+
+Run the actual reduced QAT sweep by removing `--dry-run`:
+
+```bash
+python -u training/train_indoor_1D_hawq_qat_sweep.py \
+  --ai8x-training-root "${AI8X_TRAINING_ROOT}" \
+  --ai8x-synthesis-root "${AI8X_SYNTHESIS_ROOT}" \
+  --configs-csv "${HAWQ_DIR}/hawq_frontier_candidates.csv" \
+  --input-lengths "${ALPHAS[@]}" \
+  --num-seeds 5 \
+  --start-seed 42 \
+  --workers 0 \
+  --epochs 10 \
+  --z-score 2.0 \
+  --out-dir hawq_qat_frontier_out
+```
+
+Then apply ACE to the reduced QAT summary, not to the exhaustive QAT sweep:
+
+```bash
+python hawqv2/tools/select_ace_from_hawq.py \
+  "${ITEMS[@]}" \
+  --eval-csv training/hawq_qat_frontier_out/hawq_qat_sweep_summary.csv \
+  --eval-source-label QAT \
+  --candidate-set frontier \
+  --target-acc 99.2 \
+  --beta1 1.0 \
+  --beta2 0.0 \
+  --limit 20
+```
+
+This route evaluates only the HAWQ size--\(\Omega\) frontier with QAT, while the full 891-point QAT sweep remains the reference/oracle.
+
+### 5.3 PTQ Mixed-Precision Sweep
 
 Script: `train_indoor_1D_mixed_sweep_ptq.py`
+
+What it does:
+
+* Trains or loads an FP32 checkpoint for each input length.
+* Generates a per-config ai8x quantization policy with layer-wise bit overrides for `conv1`, `conv2`, `fc1`, and `fc2`.
+* Runs PTQ calibration with `calibrate_ptq_simple.py`.
+* Runs ai8x `quantize.py` to produce the quantized checkpoint.
+* Evaluates the quantized checkpoint with `train.py --evaluate -8` using the same policy.
 
 Run (example):
 

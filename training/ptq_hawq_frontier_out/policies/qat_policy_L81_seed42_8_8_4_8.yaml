@@ -1,0 +1,12 @@
+start_epoch: 0
+weight_bits: 8
+outlier_removal_z_score: 2.0
+overrides:
+  conv1:
+    weight_bits: 8
+  conv2:
+    weight_bits: 8
+  fc1:
+    weight_bits: 4
+  fc2:
+    weight_bits: 8

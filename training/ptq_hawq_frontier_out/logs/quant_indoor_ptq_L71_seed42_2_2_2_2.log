@@ -1,0 +1,13 @@
+Configuring device: MAX78002
+Converting checkpoint file /Users/hamza/Documents/GitHub/Indoor-Environment-Quantization/training/ptq_hawq_frontier_out/checkpoints/indoor_ptq_L71_seed42_2_2_2_2_calibrated.pth.tar to /Users/hamza/Documents/GitHub/Indoor-Environment-Quantization/training/ptq_hawq_frontier_out/checkpoints/indoor_ptq_L71_seed42_2_2_2_2_quantized.pth.tar
+
+Model keys (state_dict):
+conv1.output_shift, conv1.activation_threshold, conv1.final_scale, conv1.weight_bits, conv1.bias_bits, conv1.quantize_activation, conv1.clamp_activation, conv1.adjust_output_shift, conv1.shift_quantile, conv1.op.weight, conv1.op.bias, conv2.output_shift, conv2.activation_threshold, conv2.final_scale, conv2.weight_bits, conv2.bias_bits, conv2.quantize_activation, conv2.clamp_activation, conv2.adjust_output_shift, conv2.shift_quantile, conv2.op.weight, conv2.op.bias, fc1.output_shift, fc1.activation_threshold, fc1.final_scale, fc1.weight_bits, fc1.bias_bits, fc1.quantize_activation, fc1.clamp_activation, fc1.adjust_output_shift, fc1.shift_quantile, fc1.op.weight, fc1.op.bias, fc2.output_shift, fc2.activation_threshold, fc2.final_scale, fc2.weight_bits, fc2.bias_bits, fc2.quantize_activation, fc2.clamp_activation, fc2.adjust_output_shift, fc2.shift_quantile, fc2.op.weight, fc2.op.bias
+conv1.op.weight avg_max: 5.325962 max: 11.984822 mean: 0.20299199 factor: [0.125] bits: 2
+conv1.op.bias avg_max: 0.056473386 max: 0.20397113 mean: 0.056473386 factor: [0.125] bits: 2
+conv2.op.weight avg_max: 1.2724912 max: 1.5985572 mean: -0.008762289 factor: [1.] bits: 2
+conv2.op.bias avg_max: 0.0812432 max: 0.6794972 mean: 0.0812432 factor: [1.] bits: 2
+fc1.op.weight avg_max: 0.047734156 max: 0.08774671 mean: 0.0009586244 factor: [16.] bits: 2
+fc1.op.bias avg_max: 0.0015571148 max: 0.011205658 mean: 0.0015571148 factor: [16.] bits: 2
+fc2.op.weight avg_max: 0.27833834 max: 0.31974986 mean: -0.0073615946 factor: [4.] bits: 2
+fc2.op.bias avg_max: 0.0047095045 max: 0.016340297 mean: 0.0047095045 factor: [4.] bits: 2

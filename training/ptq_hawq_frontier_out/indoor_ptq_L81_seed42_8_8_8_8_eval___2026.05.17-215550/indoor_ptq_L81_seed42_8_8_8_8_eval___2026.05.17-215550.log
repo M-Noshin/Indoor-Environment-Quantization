@@ -1,0 +1,39 @@
+2026-05-17 21:55:50,098 - Log file for this run: /Users/hamza/Documents/GitHub/Indoor-Environment-Quantization/training/ptq_hawq_frontier_out/indoor_ptq_L81_seed42_8_8_8_8_eval___2026.05.17-215550/indoor_ptq_L81_seed42_8_8_8_8_eval___2026.05.17-215550.log
+2026-05-17 21:55:50,100 - Configuring device: MAX78002, simulate=True.
+2026-05-17 21:55:50,131 - No CUDA, ROCm, or MPS hardware acceleration, training will be slow
+2026-05-17 21:55:50,149 - => loading checkpoint /Users/hamza/Documents/GitHub/Indoor-Environment-Quantization/training/ptq_hawq_frontier_out/checkpoints/indoor_ptq_L81_seed42_8_8_8_8_quantized.pth.tar
+2026-05-17 21:55:50,155 - => Checkpoint contents:
++----------------------+-------------+--------------------+
+| Key                  | Type        | Value              |
+|----------------------+-------------+--------------------|
+| arch                 | str         | ai85indoorenvnetv2 |
+| compression_sched    | dict        |                    |
+| epoch                | int         | 7                  |
+| extras               | dict        |                    |
+| optimizer_state_dict | dict        |                    |
+| optimizer_type       | type        | Adam               |
+| state_dict           | OrderedDict |                    |
++----------------------+-------------+--------------------+
+
+2026-05-17 21:55:50,156 - => Checkpoint['extras'] contents:
++-----------------+--------+-------------------+
+| Key             | Type   | Value             |
+|-----------------+--------+-------------------|
+| best_epoch      | int    | 7                 |
+| best_mAP        | int    | 0                 |
+| best_top1       | float  | 99.85775862068965 |
+| clipping_method | str    | MAX_BIT_SHIFT     |
+| current_mAP     | int    | 0                 |
+| current_top1    | float  | 99.85775862068965 |
++-----------------+--------+-------------------+
+
+2026-05-17 21:55:50,157 - Loaded compression schedule from checkpoint (epoch 7)
+2026-05-17 21:55:50,161 - => loaded 'state_dict' from checkpoint '/Users/hamza/Documents/GitHub/Indoor-Environment-Quantization/training/ptq_hawq_frontier_out/checkpoints/indoor_ptq_L81_seed42_8_8_8_8_quantized.pth.tar'
+2026-05-17 21:55:50,165 - Optimizer Type: <class 'torch.optim.sgd.SGD'>
+2026-05-17 21:55:50,166 - Optimizer Args: {'lr': 0.1, 'momentum': 0.9, 'dampening': 0, 'weight_decay': 0.0001, 'nesterov': False, 'maximize': False, 'foreach': None, 'differentiable': False}
+2026-05-17 21:55:55,377 - Dataset sizes:
+	test=77600
+2026-05-17 21:55:55,377 - --- test (ckpt) ---------------------
+2026-05-17 21:55:55,378 - 77600 samples (256 per mini-batch)
+2026-05-17 21:55:55,971 - 
+2026-05-17 21:55:55,972 - Log file for this run: /Users/hamza/Documents/GitHub/Indoor-Environment-Quantization/training/ptq_hawq_frontier_out/indoor_ptq_L81_seed42_8_8_8_8_eval___2026.05.17-215550/indoor_ptq_L81_seed42_8_8_8_8_eval___2026.05.17-215550.log

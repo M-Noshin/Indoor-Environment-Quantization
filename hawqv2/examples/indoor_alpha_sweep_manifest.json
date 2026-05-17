@@ -1,0 +1,19 @@
+{
+  "items": [
+    {
+      "tag": "L101",
+      "alpha": 101,
+      "input_length": 101,
+      "checkpoint": "/abs/path/to/indoor_L101_float_best.pth.tar",
+      "data_dir": "/abs/path/to/ai8x-training/data/indoor_environment",
+      "notes": "Optional free-form metadata."
+    },
+    {
+      "tag": "L91",
+      "alpha": 91,
+      "input_length": 91,
+      "checkpoint": "/abs/path/to/indoor_L91_float_best.pth.tar",
+      "data_dir": "/abs/path/to/ai8x-training/data/indoor_environment"
+    }
+  ]
+}
