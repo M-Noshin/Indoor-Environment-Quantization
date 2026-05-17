@@ -279,13 +279,15 @@ python hawqv2/tools/export_hawq_candidates.py \
   --output hawqv2/hawqv2_runs/hawq_frontier_candidates_L91.csv
 ```
 
-Then evaluate those candidates with ai8x QAT:
+Then evaluate those candidates with ai8x QAT. As with the other overlay training scripts in this repository, copy
+`training/train_indoor_1D_hawq_qat_sweep.py` into your local `ai8x-training` root and run it from there so the
+generated logs/checkpoints stay inside `ai8x-training` rather than inside this repository:
 
 ```bash
-python -u training/train_indoor_1D_hawq_qat_sweep.py \
-  --ai8x-training-root /Users/hamza/Desktop/testMax/ai8x-training \
-  --ai8x-synthesis-root /Users/hamza/Desktop/testMax/ai8x-synthesis \
-  --configs-csv hawqv2/hawqv2_runs/hawq_frontier_candidates_L91.csv \
+cd /path/to/ai8x-training
+
+python -u train_indoor_1D_hawq_qat_sweep.py \
+  --configs-csv /path/to/Indoor-Environment-Quantization/hawqv2/hawqv2_runs/hawq_frontier_candidates_L91.csv \
   --input-lengths 91 \
   --num-seeds 5 \
   --start-seed 42 \
@@ -301,7 +303,7 @@ to apply ACE to the QAT results:
 ```bash
 python hawqv2/tools/select_ace_from_hawq.py \
   --item 91:hawqv2/hawqv2_runs/indoor_L91_float_hawqv2_pareto.json \
-  --eval-csv training/hawq_qat_frontier_L91/hawq_qat_sweep_summary.csv \
+  --eval-csv /path/to/ai8x-training/hawq_qat_frontier_L91/hawq_qat_sweep_summary.csv \
   --eval-source-label QAT \
   --candidate-set frontier \
   --target-acc 99.2 \
@@ -392,10 +394,10 @@ python hawqv2/tools/export_hawq_candidates.py \
 Then:
 
 ```bash
-python -u training/train_indoor_1D_hawq_qat_sweep.py \
-  --ai8x-training-root /Users/hamza/Desktop/testMax/ai8x-training \
-  --ai8x-synthesis-root /Users/hamza/Desktop/testMax/ai8x-synthesis \
-  --configs-csv hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto/hawq_frontier_candidates.csv \
+cd /path/to/ai8x-training
+
+python -u train_indoor_1D_hawq_qat_sweep.py \
+  --configs-csv /path/to/Indoor-Environment-Quantization/hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto/hawq_frontier_candidates.csv \
   --input-lengths 101 91 81 71 61 51 41 31 21 11 5 \
   --num-seeds 5 \
   --start-seed 42 \
@@ -416,7 +418,7 @@ python hawqv2/tools/select_ace_from_hawq.py \
   --item 21:hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto/results/L21.json \
   --item 11:hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto/results/L11.json \
   --item 5:hawqv2/hawqv2_runs/indoor_alpha_sweep_pareto/results/L5.json \
-  --eval-csv training/hawq_qat_frontier/hawq_qat_sweep_summary.csv \
+  --eval-csv /path/to/ai8x-training/hawq_qat_frontier/hawq_qat_sweep_summary.csv \
   --eval-source-label QAT \
   --candidate-set frontier \
   --target-acc 99.2 \

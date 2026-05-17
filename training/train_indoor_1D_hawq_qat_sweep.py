@@ -30,53 +30,6 @@ import yaml
 PYTHON_EXECUTABLE = sys.executable
 
 
-def _ensure_dir_symlink(link: Path, target: Path) -> None:
-    """Create link -> target (dir). Replace broken or mismatched symlinks."""
-    target_res = target.resolve()
-    if link.is_symlink():
-        try:
-            if link.resolve(strict=True) == target_res:
-                return
-        except (FileNotFoundError, OSError):
-            pass
-        link.unlink(missing_ok=True)
-    elif link.exists():
-        raise FileExistsError(
-            f"{link} exists and is not a symlink; remove it or use a different --out-dir."
-        )
-    link.symlink_to(target_res, target_is_directory=True)
-
-
-def _resolve_ai8x_path(
-    cli: str | None,
-    env_key: str,
-    default_path: Path,
-    *,
-    flag_name: str,
-    label: str,
-) -> Path:
-    """First existing path wins: CLI flag, then env, then *default_path* (testMax layout)."""
-    attempts: list[tuple[str, Path]] = []
-    if cli and str(cli).strip():
-        attempts.append((flag_name, Path(cli).expanduser()))
-    env_raw = (os.environ.get(env_key) or "").strip()
-    if env_raw:
-        attempts.append((env_key, Path(env_raw).expanduser()))
-
-    for where, raw in attempts:
-        try:
-            resolved = raw.resolve()
-        except OSError:
-            print(f"Note: {where}={raw!r} could not be resolved; skipping.", file=sys.stderr)
-            continue
-        if resolved.exists():
-            return resolved
-        print(f"Note: {where}={raw!r} not found on this machine; skipping.", file=sys.stderr)
-
-    print(f"Using default {label}: {default_path}", file=sys.stderr)
-    return default_path.resolve()
-
-
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--configs-csv", required=True,
@@ -94,14 +47,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--z-score", type=float, default=2.0)
     parser.add_argument("--device", default="MAX78002")
     parser.add_argument("--data-dir", default="data/indoor_environment")
-    parser.add_argument("--ai8x-training-root", default=None,
-                        help="Path to ai8x-training. Tried in order with env "
-                        "AI8X_TRAINING_ROOT, then <parent-of-Indoor-repo>/testMax/ai8x-training "
-                        "(first path that exists wins; stale paths are skipped).")
-    parser.add_argument("--ai8x-synthesis-root", default=None,
-                        help="Path to ai8x-synthesis. Tried in order with env "
-                        "AI8X_SYNTHESIS_ROOT, then <parent-of-Indoor-repo>/testMax/ai8x-synthesis "
-                        "(first path that exists wins; stale paths are skipped).")
     parser.add_argument("--out-dir", default="hawq_qat_sweep_out")
     parser.add_argument("--dry-run", action="store_true",
                         help="Validate and print planned workload without running QAT.")
@@ -109,27 +54,12 @@ def parse_args() -> argparse.Namespace:
 
 
 args = parse_args()
-SCRIPT_DIR = Path(__file__).resolve().parent
-REPO_ROOT = SCRIPT_DIR.parent
-_default_training = REPO_ROOT.parent / "testMax" / "ai8x-training"
-_default_synthesis = REPO_ROOT.parent / "testMax" / "ai8x-synthesis"
-AI8X_TRAINING_ROOT = _resolve_ai8x_path(
-    args.ai8x_training_root,
-    "AI8X_TRAINING_ROOT",
-    _default_training,
-    flag_name="--ai8x-training-root",
-    label="ai8x-training",
-)
-AI8X_SYNTHESIS_ROOT = _resolve_ai8x_path(
-    args.ai8x_synthesis_root,
-    "AI8X_SYNTHESIS_ROOT",
-    _default_synthesis,
-    flag_name="--ai8x-synthesis-root",
-    label="ai8x-synthesis",
-)
+REPO_ROOT = Path(__file__).resolve().parent
+AI8X_TRAINING_ROOT = REPO_ROOT
+AI8X_SYNTHESIS_ROOT = REPO_ROOT.parent / "ai8x-synthesis"
 OUTPUT_DIR = Path(args.out_dir)
 if not OUTPUT_DIR.is_absolute():
-    OUTPUT_DIR = SCRIPT_DIR / OUTPUT_DIR
+    OUTPUT_DIR = REPO_ROOT / OUTPUT_DIR
 
 LOGS_DIR = OUTPUT_DIR / "logs"
 CHECKPOINTS_DIR = OUTPUT_DIR / "checkpoints"
@@ -148,30 +78,11 @@ LOGS_DIR.mkdir(parents=True, exist_ok=True)
 CHECKPOINTS_DIR.mkdir(parents=True, exist_ok=True)
 POLICY_DIR.mkdir(parents=True, exist_ok=True)
 
-models_link = RUN_CWD / "models"
-models_target = AI8X_TRAINING_ROOT / "models"
-_ensure_dir_symlink(models_link, models_target)
-
-datasets_link = RUN_CWD / "datasets"
-datasets_target = AI8X_TRAINING_ROOT / "datasets"
-_ensure_dir_symlink(datasets_link, datasets_target)
-
 
 def build_env() -> dict[str, str]:
     env = os.environ.copy()
-    runtime_home = OUTPUT_DIR / "runtime_home"
-    mpl_config = OUTPUT_DIR / "mplconfig"
-    runtime_home.mkdir(parents=True, exist_ok=True)
-    mpl_config.mkdir(parents=True, exist_ok=True)
-    (runtime_home / ".pyffmpeg").mkdir(parents=True, exist_ok=True)
-    python_paths = [
-        str(AI8X_TRAINING_ROOT),
-        str(AI8X_TRAINING_ROOT / "distiller"),
-    ]
-    env["PYTHONPATH"] = ":".join(python_paths + [env.get("PYTHONPATH", "")])
-    env["HOME"] = str(runtime_home)
-    env["MPLCONFIGDIR"] = str(mpl_config)
-    env["NO_ALBUMENTATIONS_UPDATE"] = "1"
+    distiller_path = str(REPO_ROOT / "distiller")
+    env["PYTHONPATH"] = f"{distiller_path}:{env.get('PYTHONPATH', '')}"
     if torch.cuda.is_available():
         env["CUDA_VISIBLE_DEVICES"] = "0"
     return env
@@ -179,8 +90,8 @@ def build_env() -> dict[str, str]:
 
 def run_cmd_tee(cmd_list: list[str], log_path: Path, cwd: Path, env: dict[str, str]) -> None:
     cmd = " ".join(str(item) for item in cmd_list)
-    tee_cmd = f"set -o pipefail; {cmd} 2>&1 | tee {log_path}"
-    subprocess.run(tee_cmd, shell=True, executable="/bin/bash", cwd=str(cwd), env=env, check=True)
+    tee_cmd = f"{cmd} 2>&1 | tee {log_path}"
+    subprocess.run(tee_cmd, shell=True, cwd=str(cwd), env=env, check=True)
 
 
 def normalize_config(config: str) -> str:
@@ -229,15 +140,11 @@ def load_candidate_configs(path: Path, input_lengths: set[int]) -> dict[int, lis
 
 def validate_inputs() -> None:
     required = {
-        "ai8x training root": AI8X_TRAINING_ROOT,
-        "ai8x synthesis root": AI8X_SYNTHESIS_ROOT,
         "train.py": TRAIN_PY,
         "quantize.py": QUANTIZE_PY,
         "schedule-indoor-env.yaml": SCHEDULE_YAML,
         "data directory": DATA_DIR,
         "candidate CSV": Path(args.configs_csv),
-        "models link": models_link,
-        "datasets link": datasets_link,
     }
     missing = [f"{name}: {path}" for name, path in required.items() if not Path(path).exists()]
     if missing:
