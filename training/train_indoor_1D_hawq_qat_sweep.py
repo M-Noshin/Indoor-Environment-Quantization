@@ -30,6 +30,53 @@ import yaml
 PYTHON_EXECUTABLE = sys.executable
 
 
+def _ensure_dir_symlink(link: Path, target: Path) -> None:
+    """Create link -> target (dir). Replace broken or mismatched symlinks."""
+    target_res = target.resolve()
+    if link.is_symlink():
+        try:
+            if link.resolve(strict=True) == target_res:
+                return
+        except (FileNotFoundError, OSError):
+            pass
+        link.unlink(missing_ok=True)
+    elif link.exists():
+        raise FileExistsError(
+            f"{link} exists and is not a symlink; remove it or use a different --out-dir."
+        )
+    link.symlink_to(target_res, target_is_directory=True)
+
+
+def _resolve_ai8x_path(
+    cli: str | None,
+    env_key: str,
+    default_path: Path,
+    *,
+    flag_name: str,
+    label: str,
+) -> Path:
+    """First existing path wins: CLI flag, then env, then *default_path* (testMax layout)."""
+    attempts: list[tuple[str, Path]] = []
+    if cli and str(cli).strip():
+        attempts.append((flag_name, Path(cli).expanduser()))
+    env_raw = (os.environ.get(env_key) or "").strip()
+    if env_raw:
+        attempts.append((env_key, Path(env_raw).expanduser()))
+
+    for where, raw in attempts:
+        try:
+            resolved = raw.resolve()
+        except OSError:
+            print(f"Note: {where}={raw!r} could not be resolved; skipping.", file=sys.stderr)
+            continue
+        if resolved.exists():
+            return resolved
+        print(f"Note: {where}={raw!r} not found on this machine; skipping.", file=sys.stderr)
+
+    print(f"Using default {label}: {default_path}", file=sys.stderr)
+    return default_path.resolve()
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--configs-csv", required=True,
@@ -48,9 +95,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--device", default="MAX78002")
     parser.add_argument("--data-dir", default="data/indoor_environment")
     parser.add_argument("--ai8x-training-root", default=None,
-                        help="Path to the full ai8x-training tree.")
+                        help="Path to ai8x-training. Tried in order with env "
+                        "AI8X_TRAINING_ROOT, then <parent-of-Indoor-repo>/testMax/ai8x-training "
+                        "(first path that exists wins; stale paths are skipped).")
     parser.add_argument("--ai8x-synthesis-root", default=None,
-                        help="Path to ai8x-synthesis.")
+                        help="Path to ai8x-synthesis. Tried in order with env "
+                        "AI8X_SYNTHESIS_ROOT, then <parent-of-Indoor-repo>/testMax/ai8x-synthesis "
+                        "(first path that exists wins; stale paths are skipped).")
     parser.add_argument("--out-dir", default="hawq_qat_sweep_out")
     parser.add_argument("--dry-run", action="store_true",
                         help="Validate and print planned workload without running QAT.")
@@ -60,8 +111,22 @@ def parse_args() -> argparse.Namespace:
 args = parse_args()
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent
-AI8X_TRAINING_ROOT = Path(args.ai8x_training_root) if args.ai8x_training_root else SCRIPT_DIR
-AI8X_SYNTHESIS_ROOT = Path(args.ai8x_synthesis_root) if args.ai8x_synthesis_root else (REPO_ROOT.parent / "ai8x-synthesis")
+_default_training = REPO_ROOT.parent / "testMax" / "ai8x-training"
+_default_synthesis = REPO_ROOT.parent / "testMax" / "ai8x-synthesis"
+AI8X_TRAINING_ROOT = _resolve_ai8x_path(
+    args.ai8x_training_root,
+    "AI8X_TRAINING_ROOT",
+    _default_training,
+    flag_name="--ai8x-training-root",
+    label="ai8x-training",
+)
+AI8X_SYNTHESIS_ROOT = _resolve_ai8x_path(
+    args.ai8x_synthesis_root,
+    "AI8X_SYNTHESIS_ROOT",
+    _default_synthesis,
+    flag_name="--ai8x-synthesis-root",
+    label="ai8x-synthesis",
+)
 OUTPUT_DIR = Path(args.out_dir)
 if not OUTPUT_DIR.is_absolute():
     OUTPUT_DIR = SCRIPT_DIR / OUTPUT_DIR
@@ -85,13 +150,11 @@ POLICY_DIR.mkdir(parents=True, exist_ok=True)
 
 models_link = RUN_CWD / "models"
 models_target = AI8X_TRAINING_ROOT / "models"
-if not models_link.exists():
-    models_link.symlink_to(models_target, target_is_directory=True)
+_ensure_dir_symlink(models_link, models_target)
 
 datasets_link = RUN_CWD / "datasets"
 datasets_target = AI8X_TRAINING_ROOT / "datasets"
-if not datasets_link.exists():
-    datasets_link.symlink_to(datasets_target, target_is_directory=True)
+_ensure_dir_symlink(datasets_link, datasets_target)
 
 
 def build_env() -> dict[str, str]:
