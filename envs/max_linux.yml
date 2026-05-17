@@ -13,6 +13,7 @@
 # Pip-only fallback (no conda): keep `../requirements.txt` identical to this `pip:` block (pins +
 # markers). Install Graphviz libs separately before `pip install -r requirements.txt`.
 name: max
+# matplotlib 3.9.1 + numpy 1.26.4: compatible with TensorFlow 2.19+ (numpy<2.2) if you pip-install TF later.
 channels:
   - conda-forge
   - defaults
