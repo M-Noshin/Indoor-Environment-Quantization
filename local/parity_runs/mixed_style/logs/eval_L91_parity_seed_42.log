@@ -1,0 +1,78 @@
+Log file for this run: /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/mixed_style/indoor_mixed_seed_42__L91__8_8_2_2_mixed_eval___2026.05.18-053655/indoor_mixed_seed_42__L91__8_8_2_2_mixed_eval___2026.05.18-053655.log
+Configuring device: MAX78002, simulate=True.
+=> loading checkpoint /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/mixed_style/indoor_mixed_seed_42__L91__8_8_2_2___2026.05.18-053205/indoor_mixed_seed_42__L91__8_8_2_2_qat_best_qmixed.pth.tar
+=> Checkpoint contents:
++----------------------+-------------+--------------------+
+| Key                  | Type        | Value              |
+|----------------------+-------------+--------------------|
+| arch                 | str         | ai85indoorenvnetv2 |
+| compression_sched    | dict        |                    |
+| epoch                | int         | 9                  |
+| extras               | dict        |                    |
+| optimizer_state_dict | dict        |                    |
+| optimizer_type       | type        | Adam               |
+| state_dict           | OrderedDict |                    |
++----------------------+-------------+--------------------+
+
+=> Checkpoint['extras'] contents:
++-----------------+--------+-------------------+
+| Key             | Type   | Value             |
+|-----------------+--------+-------------------|
+| best_epoch      | int    | 9                 |
+| best_mAP        | int    | 0                 |
+| best_top1       | float  | 99.78879310344828 |
+| clipping_method | str    | MAX_BIT_SHIFT     |
+| current_mAP     | int    | 0                 |
+| current_top1    | float  | 99.78879310344828 |
++-----------------+--------+-------------------+
+
+Loaded compression schedule from checkpoint (epoch 9)
+=> loaded 'state_dict' from checkpoint '/shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/mixed_style/indoor_mixed_seed_42__L91__8_8_2_2___2026.05.18-053205/indoor_mixed_seed_42__L91__8_8_2_2_qat_best_qmixed.pth.tar'
+Optimizer Type: <class 'torch.optim.adam.Adam'>
+Optimizer Args: {'lr': 0.1, 'betas': (0.9, 0.999), 'eps': 1e-08, 'weight_decay': 0.0005, 'amsgrad': False, 'maximize': False, 'foreach': None, 'capturable': False, 'differentiable': False, 'fused': None}
+Dataset sizes:
+	test=77600
+--- test (ckpt) ---------------------
+77600 samples (256 per mini-batch)
+==> Saving sample at index 10 to sample_indoorenvironment_1d.npy
+Test: [   10/  304]    Loss 0.046573    Top1 98.554688    
+Test: [   20/  304]    Loss 0.039112    Top1 98.808594    
+Test: [   30/  304]    Loss 0.038442    Top1 98.802083    
+Test: [   40/  304]    Loss 0.038486    Top1 98.808594    
+Test: [   50/  304]    Loss 0.037725    Top1 98.828125    
+Test: [   60/  304]    Loss 0.037063    Top1 98.841146    
+Test: [   70/  304]    Loss 0.036109    Top1 98.844866    
+Test: [   80/  304]    Loss 0.036369    Top1 98.842773    
+Test: [   90/  304]    Loss 0.036338    Top1 98.845486    
+Test: [  100/  304]    Loss 0.037237    Top1 98.828125    
+Test: [  110/  304]    Loss 0.036284    Top1 98.852983    
+Test: [  120/  304]    Loss 0.036246    Top1 98.850911    
+Test: [  130/  304]    Loss 0.036032    Top1 98.852163    
+Test: [  140/  304]    Loss 0.036530    Top1 98.839286    
+Test: [  150/  304]    Loss 0.036394    Top1 98.843750    
+Test: [  160/  304]    Loss 0.035752    Top1 98.869629    
+Test: [  170/  304]    Loss 0.036031    Top1 98.853401    
+Test: [  180/  304]    Loss 0.035974    Top1 98.854167    
+Test: [  190/  304]    Loss 0.035951    Top1 98.852796    
+Test: [  200/  304]    Loss 0.035634    Top1 98.859375    
+Test: [  210/  304]    Loss 0.035541    Top1 98.865327    
+Test: [  220/  304]    Loss 0.035675    Top1 98.852983    
+Test: [  230/  304]    Loss 0.035251    Top1 98.870584    
+Test: [  240/  304]    Loss 0.035162    Top1 98.872070    
+Test: [  250/  304]    Loss 0.035704    Top1 98.854688    
+Test: [  260/  304]    Loss 0.035703    Top1 98.855168    
+Test: [  270/  304]    Loss 0.035712    Top1 98.859954    
+Test: [  280/  304]    Loss 0.035455    Top1 98.869978    
+Test: [  290/  304]    Loss 0.035561    Top1 98.865841    
+Test: [  300/  304]    Loss 0.035831    Top1 98.855469    
+Test: [  304/  304]    Loss 0.035835    Top1 98.850515    
+==> Top1: 98.851    Loss: 0.036
+
+==> Confusion:
+[[19265     5   127     3]
+ [   48 19008   344     0]
+ [    8   358 19034     0]
+ [    0     1     0 19399]]
+
+
+Log file for this run: /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/mixed_style/indoor_mixed_seed_42__L91__8_8_2_2_mixed_eval___2026.05.18-053655/indoor_mixed_seed_42__L91__8_8_2_2_mixed_eval___2026.05.18-053655.log
