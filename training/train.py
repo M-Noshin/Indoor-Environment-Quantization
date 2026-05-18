@@ -282,6 +282,7 @@ def main():
         # Set GPU index to -1 if using CPU
         args.device = 'cpu'
         args.gpus = -1
+
     elif torch.cuda.is_available():
         args.device = 'cuda'
         if local_rank >= 0:  # DistributedDataParallel
@@ -300,11 +301,28 @@ def main():
                                      f'{available_gpus} devices available')
             # Set default device in case the first one on the list != 0
             torch.cuda.set_device(args.gpus[0])
+
     elif os.uname().release < '22.3.0':
         msglogger.warning('mps disabled, update macOS to Ventura 13.4 or later for mps support')
         args.device = 'cpu'
     else:
         args.device = 'mps'
+
+    # -------------------- DEVICE PROBE (prints once) --------------------
+    msglogger.info("Torch version: %s | CUDA compiled: %s", torch.__version__, torch.version.cuda)
+    msglogger.info("Selected training device: %s", args.device)
+    msglogger.info("torch.cuda.is_available(): %s | torch.cuda.device_count(): %d",
+                   torch.cuda.is_available(), torch.cuda.device_count())
+    msglogger.info("CUDA_VISIBLE_DEVICES=%s", os.environ.get("CUDA_VISIBLE_DEVICES", "<unset>"))
+
+    if args.device == "cuda":
+        cur = torch.cuda.current_device()
+        msglogger.info("CUDA current_device=%d name=%s", cur, torch.cuda.get_device_name(cur))
+        # Optional: show memory right away (will increase as training starts)
+        alloc = torch.cuda.memory_allocated(cur) / (1024**2)
+        reserv = torch.cuda.memory_reserved(cur) / (1024**2)
+        msglogger.info("CUDA mem: allocated=%.1f MiB | reserved=%.1f MiB", alloc, reserv)
+    # -------------------------------------------------------------------
 
     selected_source = next((item for item in supported_sources if item['name'] == args.dataset))
     args.labels = selected_source['output']
