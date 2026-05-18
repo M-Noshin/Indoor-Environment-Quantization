@@ -6,6 +6,10 @@
 #   ./parity_one_run.sh
 #   ./parity_one_run.sh -- --in-len 91 --config "INT 8-8-2-2" --seed 42 --epochs 2
 #
+# Same workload on Slurm (1 GPU, max_env, log: local/slurm_parity_<jobid>.out):
+#   sbatch /shared/b00090279/Indoor-Environment-Quantization/local/slurm_parity_one_run.sh
+#   sbatch .../slurm_parity_one_run.sh --epochs 2 --in-len 91
+#
 # Optional env overrides:
 #   AI8X_TRAINING_ROOT  (default: /shared/b00090279/testMax/ai8x-training)
 #   AI8X_SYNTHESIS_ROOT (default: /shared/b00090279/testMax/ai8x-synthesis)

@@ -1,0 +1,15 @@
+# Indoor Environment training schedule with cosine decay + QAT
+version: 1
+
+lr_schedulers:
+  cosine_schedule:
+    class: CosineAnnealingLR
+    T_max: 10            # total epochs
+    eta_min: 1.0e-5      # final LR
+
+policies:
+  - lr_scheduler:
+      instance_name: cosine_schedule
+    starting_epoch: 0
+    ending_epoch: 10
+    frequency: 1 

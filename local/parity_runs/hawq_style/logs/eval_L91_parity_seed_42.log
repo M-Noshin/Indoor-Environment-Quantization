@@ -1,6 +1,12 @@
-Log file for this run: /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/hawq_style/indoor_hawq_qat_seed_42__L91__8_8_2_2_mixed_eval___2026.05.18-054246/indoor_hawq_qat_seed_42__L91__8_8_2_2_mixed_eval___2026.05.18-054246.log
+Log file for this run: /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/hawq_style/indoor_hawq_qat_seed_42__L91__8_8_2_2_mixed_eval___2026.05.18-062834/indoor_hawq_qat_seed_42__L91__8_8_2_2_mixed_eval___2026.05.18-062834.log
 Configuring device: MAX78002, simulate=True.
-=> loading checkpoint /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/hawq_style/indoor_hawq_qat_seed_42__L91__8_8_2_2___2026.05.18-053746/indoor_hawq_qat_seed_42__L91__8_8_2_2_qat_best_qmixed.pth.tar
+Torch version: 2.2.2+cu121 | CUDA compiled: 12.1
+Selected training device: cuda
+torch.cuda.is_available(): True | torch.cuda.device_count(): 1
+CUDA_VISIBLE_DEVICES=0
+CUDA current_device=0 name=NVIDIA A10G
+CUDA mem: allocated=0.0 MiB | reserved=0.0 MiB
+=> loading checkpoint /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/hawq_style/indoor_hawq_qat_seed_42__L91__8_8_2_2___2026.05.18-062535/indoor_hawq_qat_seed_42__L91__8_8_2_2_qat_best_qmixed.pth.tar
 => Checkpoint contents:
 +----------------------+-------------+--------------------+
 | Key                  | Type        | Value              |
@@ -27,7 +33,7 @@ Configuring device: MAX78002, simulate=True.
 +-----------------+--------+-------------------+
 
 Loaded compression schedule from checkpoint (epoch 9)
-=> loaded 'state_dict' from checkpoint '/shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/hawq_style/indoor_hawq_qat_seed_42__L91__8_8_2_2___2026.05.18-053746/indoor_hawq_qat_seed_42__L91__8_8_2_2_qat_best_qmixed.pth.tar'
+=> loaded 'state_dict' from checkpoint '/shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/hawq_style/indoor_hawq_qat_seed_42__L91__8_8_2_2___2026.05.18-062535/indoor_hawq_qat_seed_42__L91__8_8_2_2_qat_best_qmixed.pth.tar'
 Optimizer Type: <class 'torch.optim.adam.Adam'>
 Optimizer Args: {'lr': 0.1, 'betas': (0.9, 0.999), 'eps': 1e-08, 'weight_decay': 0.0005, 'amsgrad': False, 'maximize': False, 'foreach': None, 'capturable': False, 'differentiable': False, 'fused': None}
 Dataset sizes:
@@ -68,4 +74,4 @@ Test: [  304/  304]    Loss 0.035835    Top1 98.850515
 ==> Top1: 98.851    Loss: 0.036
 
 
-Log file for this run: /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/hawq_style/indoor_hawq_qat_seed_42__L91__8_8_2_2_mixed_eval___2026.05.18-054246/indoor_hawq_qat_seed_42__L91__8_8_2_2_mixed_eval___2026.05.18-054246.log
+Log file for this run: /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/hawq_style/indoor_hawq_qat_seed_42__L91__8_8_2_2_mixed_eval___2026.05.18-062834/indoor_hawq_qat_seed_42__L91__8_8_2_2_mixed_eval___2026.05.18-062834.log

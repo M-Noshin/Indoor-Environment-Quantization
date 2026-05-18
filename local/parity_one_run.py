@@ -11,6 +11,9 @@ while forcing the same:
   - same quantize.py
 
 Outputs under --out-root/<mixed_style|hawq_style>/; prints Top1 from each eval log.
+
+By default deletes those two subdirectories under --out-root before each run so stale
+train/eval folders cannot confuse checkpoint discovery. Pass --keep-output to skip.
 """
 
 from __future__ import annotations
@@ -62,6 +65,11 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--device", type=str, default="MAX78002")
     p.add_argument("--z-score", type=float, default=2.0)
     p.add_argument("--hawq-workers", type=int, default=4)
+    p.add_argument(
+        "--keep-output",
+        action="store_true",
+        help="Do not remove mixed_style/ and hawq_style/ under --out-root before running.",
+    )
     return p.parse_args()
 
 
@@ -154,10 +162,22 @@ def detect_weight_bits_label(ckpt_path: Path) -> tuple[str, str]:
 
 
 def find_best_qat(output_dir: Path, run_name: str) -> Path:
-    run_dirs = sorted(glob.glob(str(output_dir / f"{run_name}*")))
-    if not run_dirs:
-        raise FileNotFoundError(f"No run dir for {run_name!r} under {output_dir}")
-    run_dir = Path(run_dirs[-1])
+    # Train run dirs look like:  <run_name>___<timestamp>
+    # Eval dirs look like:       <run_name>_<label>_eval___<timestamp>
+    # A naive f"{run_name}*" glob sorts eval after train and breaks sorted(...)[-1] when
+    # a previous eval folder is still present under out_dir.
+    train_glob = sorted(glob.glob(str(output_dir / f"{run_name}___*")))
+    if train_glob:
+        run_dir = Path(train_glob[-1])
+    else:
+        candidates = sorted(glob.glob(str(output_dir / f"{run_name}*")))
+        train_dirs = [p for p in candidates if "_eval_" not in Path(p).name]
+        if not train_dirs:
+            raise FileNotFoundError(
+                f"No train run dir for {run_name!r} under {output_dir} "
+                f"(expected {run_name}___* or * without _eval_)"
+            )
+        run_dir = Path(train_dirs[-1])
     for pattern in ("*_qat_best.pth.tar", "*qat_best*.pth.tar", "*best*.pth.tar"):
         found = sorted(run_dir.glob(pattern))
         if found:
@@ -420,6 +440,12 @@ def main() -> None:
 
     mixed_dir = out_root / "mixed_style"
     hawq_dir = out_root / "hawq_style"
+
+    if not args.keep_output:
+        for label, path in (("mixed_style", mixed_dir), ("hawq_style", hawq_dir)):
+            if path.exists():
+                _progress(f"Removing previous {label} outputs: {path}")
+                shutil.rmtree(path)
 
     acc_mixed = run_pipeline(
         training_root=training_root,

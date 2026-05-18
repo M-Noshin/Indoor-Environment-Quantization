@@ -1,0 +1,46 @@
+=== Slurm parity_one_run job 12582 ===
+Host: gpu-dy-g5-0-82  CUDA_VISIBLE_DEVICES=0
+Python: /shared/b00090279/max_env/bin/python
+torch 2.2.2+cu121 cuda True 1
+=== parity_one_run.py ===
+Parity one-shot (unified env)
+  training_root: /shared/b00090279/testMax/ai8x-training
+  synthesis_root: /shared/b00090279/testMax/ai8x-synthesis
+  quantize.py:   /shared/b00090279/testMax/ai8x-synthesis/quantize.py
+  data_dir:      /shared/b00090279/testMax/ai8x-training/data/indoor_environment
+  python:        /shared/b00090279/max_env/bin/python
+  case:          L=91 config=INT 8-8-2-2 seed=42
+  out_root:      /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs
+
+Note: subprocess output goes only to per-phase *.log files under each out_dir;
+      the terminal stays quiet until each phase completes (train is the long step).
+
+Removing previous mixed_style outputs: /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/mixed_style
+Removing previous hawq_style outputs: /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/hawq_style
+
+========== [mixed_style] L=91 seed=42 bits=8_8_2_2 ==========
+[mixed_style] out_dir: /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/mixed_style
+[mixed_style] TRAIN starting (stdout/stderr → /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/mixed_style/logs/train_L91_parity_seed_42.log) — often 10+ min per epoch; no terminal spam until done.
+[mixed_style] TRAIN finished.
+/shared/b00090279/Indoor-Environment-Quantization/local/parity_one_run.py:146: DeprecationWarning: Conversion of an array with ndim > 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
+  bit = int(float(value.detach().cpu().numpy()))
+[mixed_style] QUANTIZE → /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/mixed_style/logs/quant_L91_parity_seed_42.log
+[mixed_style] QUANTIZE finished.
+[mixed_style] EVAL → /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/mixed_style/logs/eval_L91_parity_seed_42.log
+[mixed_style] EVAL finished. Parsed Top1: 98.851
+
+========== [hawq_style] L=91 seed=42 bits=8_8_2_2 ==========
+[hawq_style] out_dir: /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/hawq_style
+[hawq_style] TRAIN starting (stdout/stderr → /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/hawq_style/logs/train_L91_parity_seed_42.log) — often 10+ min per epoch; no terminal spam until done.
+[hawq_style] TRAIN finished.
+[hawq_style] QUANTIZE → /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/hawq_style/logs/quant_L91_parity_seed_42.log
+[hawq_style] QUANTIZE finished.
+[hawq_style] EVAL → /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/hawq_style/logs/eval_L91_parity_seed_42.log
+[hawq_style] EVAL finished. Parsed Top1: 98.851
+Results (Top1 % from eval logs)
+  mixed_style eval Top1: 98.851
+  hawq_style  eval Top1: 98.851
+
+Logs:
+  /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/mixed_style/logs
+  /shared/b00090279/Indoor-Environment-Quantization/local/parity_runs/hawq_style/logs
