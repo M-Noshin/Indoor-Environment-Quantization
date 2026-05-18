@@ -26,6 +26,7 @@ done
 
 # =============================================================================
 # (1) Single-GPU path: one frontier CSV, one QAT out dir, ACE on that summary
+#     ACE: add --report-csv to persist ranked candidates (otherwise mostly terminal output).
 # =============================================================================
 
 cd "${HAWQ_REPO_ROOT}"
@@ -66,7 +67,8 @@ python -u hawqv2/tools/select_ace_from_hawq.py \
   --target-acc 99.2 \
   --beta1 1.0 \
   --beta2 0.0 \
-  --limit 20
+  --limit 20 \
+  --report-csv "${AI8X_TRAINING_ROOT}/hawq_qat_frontier_out/hawq_frontier_ace_report.csv"
 
 # =============================================================================
 # (2) Merge part CSVs → hawq_qat_frontier_merged/ (re-run when more parts finish)
@@ -82,6 +84,7 @@ python "${HAWQ_REPO_ROOT}/local/merge_hawq_qat_parallel_parts.py" \
 # =============================================================================
 # (3) ACE on merged QAT summary (needs ITEMS from the env block above; cwd = repo root)
 #     Expect joined: N / 191 until all parts complete; missing eval rows shrinks as N grows.
+#     --report-csv writes ACE-ranked rows (still prints a short summary to the terminal).
 # =============================================================================
 
 cd "${HAWQ_REPO_ROOT}"
@@ -94,4 +97,5 @@ python -u hawqv2/tools/select_ace_from_hawq.py \
   --target-acc 99.2 \
   --beta1 1.0 \
   --beta2 0.0 \
-  --limit 20
+  --limit 20 \
+  --report-csv "${AI8X_TRAINING_ROOT}/hawq_qat_frontier_merged/hawq_frontier_ace_report.csv"

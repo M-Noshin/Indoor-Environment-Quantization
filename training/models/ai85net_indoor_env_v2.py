@@ -26,6 +26,7 @@ class AI85IndoorEnvNetv2(nn.Module):
             dimensions=(101, 1),  # pylint: disable=unused-argument
             bias=True, # Set to True by default for ai8x
             p_dropout=0.4,
+            batchnorm="Affine",
             **kwargs
     ):
         super().__init__()
@@ -34,34 +35,36 @@ class AI85IndoorEnvNetv2(nn.Module):
         # dimensions is expected to be (length, 1) for 1D
         input_length = dimensions[0] if isinstance(dimensions, tuple) and len(dimensions) > 0 else 101
         
-        # First Conv2D layer with BatchNorm and ReLU fused: 5 filters, kernel (3,3)
-        self.conv1 = ai8x.FusedConv1dBNReLU(
+        # First Conv1D layer (optionally with BatchNorm) + ReLU
+        conv1_cls = ai8x.FusedConv1dBNReLU if batchnorm in ("Affine", "NoAffine") else ai8x.FusedConv1dReLU
+        self.conv1 = conv1_cls(
             in_channels=num_channels, 
             out_channels=10, 
             kernel_size=3, 
             stride=1, 
             padding=1,
             bias=bias,
-            batchnorm="Affine",
+            batchnorm=batchnorm if conv1_cls is ai8x.FusedConv1dBNReLU else None,
             **kwargs
         )
         
-        # Second Conv2D layer with BatchNorm and ReLU fused: 5 filters, kernel (3,3)
-        self.conv2 = ai8x.FusedConv1dBNReLU(
+        # Second Conv1D layer (optionally with BatchNorm) + ReLU
+        conv2_cls = ai8x.FusedConv1dBNReLU if batchnorm in ("Affine", "NoAffine") else ai8x.FusedConv1dReLU
+        self.conv2 = conv2_cls(
             in_channels=10, 
             out_channels=10, 
             kernel_size=3,
             stride=1, 
             padding=1,
             bias=bias,
-            batchnorm="Affine",
+            batchnorm=batchnorm if conv2_cls is ai8x.FusedConv1dBNReLU else None,
             **kwargs
         )
         
         # First fully connected layer with ReLU: 10 * input_length -> 200
         # FC layers: keep bias for learnable offsets
         self.fc1 = ai8x.FusedLinearReLU(
-            in_features=10 * input_length,
+            in_features=10 * input_length, #1010 
             out_features=200,
             bias=bias,    # always on here
             **kwargs
@@ -96,9 +99,22 @@ def ai85indoorenvnetv2(pretrained=False, **kwargs):
     return AI85IndoorEnvNetv2(**kwargs)
 
 
+def ai85indoorenvnetv2_nobn(pretrained=False, **kwargs):
+    """
+    BatchNorm-free variant used for PTQ evaluation after running batchnormfuser.py.
+    """
+    assert not pretrained
+    return AI85IndoorEnvNetv2(batchnorm=None, **kwargs)
+
+
 models = [
     {
         'name': 'ai85indoorenvnetv2',
+        'min_input': 1,
+        'dim': 1,
+    },
+    {
+        'name': 'ai85indoorenvnetv2_nobn',
         'min_input': 1,
         'dim': 1,
     },
