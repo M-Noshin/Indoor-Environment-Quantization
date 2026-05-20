@@ -1,0 +1,79 @@
+2026-05-18 10:41:55,577 - Log file for this run: /Users/hamza/Documents/GitHub/Indoor-Environment-Quantization/local/parity_runs/mixed_style/indoor_mixed_seed_42__L91__8_8_2_2_mixed_eval___2026.05.18-104155/indoor_mixed_seed_42__L91__8_8_2_2_mixed_eval___2026.05.18-104155.log
+2026-05-18 10:41:55,577 - Configuring device: MAX78002, simulate=True.
+2026-05-18 10:41:55,608 - No CUDA, ROCm, or MPS hardware acceleration, training will be slow
+2026-05-18 10:41:55,624 - => loading checkpoint /Users/hamza/Documents/GitHub/Indoor-Environment-Quantization/local/parity_runs/mixed_style/indoor_mixed_seed_42__L91__8_8_2_2___2026.05.18-103438/indoor_mixed_seed_42__L91__8_8_2_2_qat_best_qmixed.pth.tar
+2026-05-18 10:41:55,630 - => Checkpoint contents:
++----------------------+-------------+--------------------+
+| Key                  | Type        | Value              |
+|----------------------+-------------+--------------------|
+| arch                 | str         | ai85indoorenvnetv2 |
+| compression_sched    | dict        |                    |
+| epoch                | int         | 9                  |
+| extras               | dict        |                    |
+| optimizer_state_dict | dict        |                    |
+| optimizer_type       | type        | Adam               |
+| state_dict           | OrderedDict |                    |
++----------------------+-------------+--------------------+
+
+2026-05-18 10:41:55,630 - => Checkpoint['extras'] contents:
++-----------------+--------+------------------+
+| Key             | Type   | Value            |
+|-----------------+--------+------------------|
+| best_epoch      | int    | 9                |
+| best_mAP        | int    | 0                |
+| best_top1       | float  | 99.8103448275862 |
+| clipping_method | str    | MAX_BIT_SHIFT    |
+| current_mAP     | int    | 0                |
+| current_top1    | float  | 99.8103448275862 |
++-----------------+--------+------------------+
+
+2026-05-18 10:41:55,630 - Loaded compression schedule from checkpoint (epoch 9)
+2026-05-18 10:41:55,634 - => loaded 'state_dict' from checkpoint '/Users/hamza/Documents/GitHub/Indoor-Environment-Quantization/local/parity_runs/mixed_style/indoor_mixed_seed_42__L91__8_8_2_2___2026.05.18-103438/indoor_mixed_seed_42__L91__8_8_2_2_qat_best_qmixed.pth.tar'
+2026-05-18 10:41:55,638 - Optimizer Type: <class 'torch.optim.adam.Adam'>
+2026-05-18 10:41:55,638 - Optimizer Args: {'lr': 0.1, 'betas': (0.9, 0.999), 'eps': 1e-08, 'weight_decay': 0.0005, 'amsgrad': False, 'maximize': False, 'foreach': None, 'capturable': False, 'differentiable': False, 'fused': None}
+2026-05-18 10:42:02,844 - Dataset sizes:
+	test=77600
+2026-05-18 10:42:02,844 - --- test (ckpt) ---------------------
+2026-05-18 10:42:02,844 - 77600 samples (256 per mini-batch)
+2026-05-18 10:42:11,960 - ==> Saving sample at index 10 to sample_indoorenvironment_1d.npy
+2026-05-18 10:42:12,035 - Test: [   10/  304]    Loss 0.048709    Top1 98.437500    
+2026-05-18 10:42:12,108 - Test: [   20/  304]    Loss 0.040030    Top1 98.750000    
+2026-05-18 10:42:12,178 - Test: [   30/  304]    Loss 0.039831    Top1 98.763021    
+2026-05-18 10:42:12,300 - Test: [   40/  304]    Loss 0.039830    Top1 98.779297    
+2026-05-18 10:42:12,373 - Test: [   50/  304]    Loss 0.038894    Top1 98.773438    
+2026-05-18 10:42:12,476 - Test: [   60/  304]    Loss 0.038435    Top1 98.789062    
+2026-05-18 10:42:12,567 - Test: [   70/  304]    Loss 0.037446    Top1 98.816964    
+2026-05-18 10:42:12,648 - Test: [   80/  304]    Loss 0.037804    Top1 98.808594    
+2026-05-18 10:42:12,723 - Test: [   90/  304]    Loss 0.037701    Top1 98.823785    
+2026-05-18 10:42:12,804 - Test: [  100/  304]    Loss 0.038718    Top1 98.804688    
+2026-05-18 10:42:12,879 - Test: [  110/  304]    Loss 0.038051    Top1 98.813920    
+2026-05-18 10:42:12,949 - Test: [  120/  304]    Loss 0.037977    Top1 98.808594    
+2026-05-18 10:42:13,027 - Test: [  130/  304]    Loss 0.037715    Top1 98.804087    
+2026-05-18 10:42:13,101 - Test: [  140/  304]    Loss 0.038388    Top1 98.783482    
+2026-05-18 10:42:13,167 - Test: [  150/  304]    Loss 0.038337    Top1 98.776042    
+2026-05-18 10:42:13,240 - Test: [  160/  304]    Loss 0.037805    Top1 98.796387    
+2026-05-18 10:42:13,307 - Test: [  170/  304]    Loss 0.038097    Top1 98.779871    
+2026-05-18 10:42:13,375 - Test: [  180/  304]    Loss 0.037980    Top1 98.784722    
+2026-05-18 10:42:13,445 - Test: [  190/  304]    Loss 0.038086    Top1 98.787007    
+2026-05-18 10:42:13,511 - Test: [  200/  304]    Loss 0.037816    Top1 98.792969    
+2026-05-18 10:42:13,580 - Test: [  210/  304]    Loss 0.037713    Top1 98.794643    
+2026-05-18 10:42:13,650 - Test: [  220/  304]    Loss 0.037934    Top1 98.781960    
+2026-05-18 10:42:13,723 - Test: [  230/  304]    Loss 0.037561    Top1 98.795856    
+2026-05-18 10:42:13,791 - Test: [  240/  304]    Loss 0.037489    Top1 98.795573    
+2026-05-18 10:42:13,868 - Test: [  250/  304]    Loss 0.038007    Top1 98.779688    
+2026-05-18 10:42:13,934 - Test: [  260/  304]    Loss 0.037973    Top1 98.781550    
+2026-05-18 10:42:14,004 - Test: [  270/  304]    Loss 0.038015    Top1 98.784722    
+2026-05-18 10:42:14,086 - Test: [  280/  304]    Loss 0.037748    Top1 98.797433    
+2026-05-18 10:42:14,154 - Test: [  290/  304]    Loss 0.037900    Top1 98.793103    
+2026-05-18 10:42:14,255 - Test: [  300/  304]    Loss 0.038261    Top1 98.773438    
+2026-05-18 10:42:14,274 - Test: [  304/  304]    Loss 0.038277    Top1 98.769330    
+2026-05-18 10:42:15,163 - ==> Top1: 98.769    Loss: 0.038
+
+2026-05-18 10:42:15,164 - ==> Confusion:
+[[19231     5   156     8]
+ [   52 18987   359     2]
+ [   10   357 19033     0]
+ [    0     6     0 19394]]
+
+2026-05-18 10:42:15,176 - 
+2026-05-18 10:42:15,176 - Log file for this run: /Users/hamza/Documents/GitHub/Indoor-Environment-Quantization/local/parity_runs/mixed_style/indoor_mixed_seed_42__L91__8_8_2_2_mixed_eval___2026.05.18-104155/indoor_mixed_seed_42__L91__8_8_2_2_mixed_eval___2026.05.18-104155.log

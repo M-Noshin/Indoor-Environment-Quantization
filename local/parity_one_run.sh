@@ -16,7 +16,7 @@
 
 set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export AI8X_TRAINING_ROOT="${AI8X_TRAINING_ROOT:-/shared/b00090279/testMax/ai8x-training}"
-export AI8X_SYNTHESIS_ROOT="${AI8X_SYNTHESIS_ROOT:-/shared/b00090279/testMax/ai8x-synthesis}"
+export AI8X_TRAINING_ROOT="${AI8X_TRAINING_ROOT:-/Users/hamza/Desktop/testMax/ai8x-training}"
+export AI8X_SYNTHESIS_ROOT="${AI8X_SYNTHESIS_ROOT:-/Users/hamza/Desktop/testMax/ai8x-synthesis}"
 
 exec python3 "${SCRIPT_DIR}/parity_one_run.py" "$@"
