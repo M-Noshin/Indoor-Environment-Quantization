@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define CTF_ALPHA 91
+#include "preprocess_config.h"
 
 /* Runtime buffer: simulates VNA sweep in MCU SRAM */
 extern float ctf_raw[CTF_ALPHA][2];

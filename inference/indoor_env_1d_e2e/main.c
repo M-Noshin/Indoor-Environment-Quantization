@@ -16,6 +16,7 @@
 #include "mxc.h"
 #include "cnn.h"
 #include "preprocess.h"
+#include "preprocess_config.h"
 #include "sampleoutput.h"
 
 #ifndef E2E_NUM_RUNS
@@ -189,7 +190,7 @@ int main(void)
   MXC_GCR->ipll_ctrl |= MXC_F_GCR_IPLL_CTRL_EN;
   SystemCoreClockUpdate();
 
-  printf("\n*** indoor_env_1d_e2e (simulated ctf_raw -> T_prep -> CNN -> act) ***\n");
+  printf("\n*** indoor_env_1d_e2e (source: %s, alpha=%d) ***\n", E2E_SYNTH_SOURCE, CTF_ALPHA);
   printf("Waiting for debugger...\n");
   MXC_Delay(SEC(2));
 

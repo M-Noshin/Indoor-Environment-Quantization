@@ -10,11 +10,6 @@
 static const float global_min = -0.011066f;
 static const float global_max = 0.011379f;
 
-/* From ai8xize / indoor_env_1d_91 — CHW int8 per channel */
-#define CNN_INPUT_ADDR_CH0 ((uint32_t)0x51800000)
-#define CNN_INPUT_ADDR_CH1 ((uint32_t)0x51840000)
-#define CNN_INPUT_WORDS_PER_CH 23
-
 float ctf_raw[CTF_ALPHA][2];
 
 void fill_ctf_raw_from_recording(int idx)
