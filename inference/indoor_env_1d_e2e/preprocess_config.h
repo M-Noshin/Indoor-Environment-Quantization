@@ -2,10 +2,10 @@
 #ifndef PREPROCESS_CONFIG_H
 #define PREPROCESS_CONFIG_H
 
-#define E2E_SYNTH_SOURCE "indoor_env_1d_91_q8824"
-#define CTF_ALPHA 91
+#define E2E_SYNTH_SOURCE "indoor_env_1d_101_q8824"
+#define CTF_ALPHA 101
 #define CNN_INPUT_ADDR_CH0 ((uint32_t)0x51800000)
 #define CNN_INPUT_ADDR_CH1 ((uint32_t)0x51840000)
-#define CNN_INPUT_WORDS_PER_CH 23
+#define CNN_INPUT_WORDS_PER_CH 26
 
 #endif // PREPROCESS_CONFIG_H

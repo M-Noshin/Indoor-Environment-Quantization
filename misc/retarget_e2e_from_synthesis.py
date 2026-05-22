@@ -22,6 +22,7 @@ _SYNTH_COPY = (
     "cnn.c",
     "cnn.h",
     "weights.h",
+    "sampledata.h",
     "sampleoutput.h",
     "softmax.c",
     "log.txt",
@@ -49,6 +50,42 @@ def _parse_load_input(main_c: str) -> tuple[int, int, int, int]:
     chw = re.search(r"CHW\s+(\d+)x1", main_c)
     alpha_chw = int(chw.group(1)) if chw else 0
     return addr0, addr1, words, alpha_chw
+
+
+def _parse_alpha_from_artifacts(synth_dir: Path) -> int:
+    log_path = synth_dir / "log.txt"
+    if log_path.is_file():
+        log = log_path.read_text(encoding="utf-8", errors="replace")
+        m = re.search(r"Input dimensions\s*=\s*\[\[(\d+),\s*1\]", log)
+        if m:
+            return int(m.group(1))
+
+    cnn_path = synth_dir / "cnn.c"
+    if cnn_path.is_file():
+        cnn = cnn_path.read_text(encoding="utf-8", errors="replace")
+        m = re.search(r"Layer 0:\s*2x(\d+),", cnn)
+        if m:
+            return int(m.group(1))
+
+    return 0
+
+
+def _parse_sampledata_words(synth_dir: Path) -> int:
+    sample_path = synth_dir / "sampledata.h"
+    if not sample_path.is_file():
+        return 0
+
+    sample = sample_path.read_text(encoding="utf-8", errors="replace")
+    counts = []
+    for name in ("SAMPLE_INPUT_0", "SAMPLE_INPUT_8"):
+        m = re.search(rf"#define\s+{name}\s+\{{(.*?)\n\}}", sample, flags=re.S)
+        if not m:
+            return 0
+        counts.append(len(re.findall(r"0x[0-9a-fA-F]+", m.group(1))))
+
+    if counts[0] != counts[1]:
+        raise ValueError("Channel 0/1 word counts differ in sampledata.h")
+    return counts[0]
 
 
 def _write_preprocess_config(
@@ -118,17 +155,31 @@ def main() -> int:
         return 1
 
     main_c = main_c_path.read_text(encoding="utf-8")
-    addr0, addr1, words, alpha_chw = _parse_load_input(main_c)
-    alpha = args.alpha if args.alpha is not None else alpha_chw
+    addr0, addr1, main_words, alpha_chw = _parse_load_input(main_c)
+    alpha_artifact = _parse_alpha_from_artifacts(synth_dir)
+    sample_words = _parse_sampledata_words(synth_dir)
+
+    alpha = args.alpha if args.alpha is not None else (alpha_artifact or alpha_chw)
     if alpha <= 0 or alpha > 101:
         print(
             f"error: invalid alpha={alpha} (use --alpha or fix CHW comment in {main_c_path})",
             file=sys.stderr,
         )
         return 1
+    words = sample_words or main_words
 
     synth_name = synth_dir.name
     print(f"Retargeting e2e -> {synth_name}  (alpha={alpha}, words/ch={words})")
+    if alpha_chw and alpha_chw != alpha:
+        print(
+            f"note: synthesis main.c CHW says alpha={alpha_chw}, but generated artifacts say alpha={alpha}; "
+            "using generated artifacts"
+        )
+    if sample_words and main_words != sample_words:
+        print(
+            f"note: synthesis main.c load_input says words/ch={main_words}, but sampledata.h has "
+            f"words/ch={sample_words}; using sampledata.h"
+        )
 
     for name in _SYNTH_COPY:
         src = synth_dir / name
@@ -154,6 +205,9 @@ def main() -> int:
             print(f"warning: ctf export failed ({exc}); run export_ctf_raw_h.py --alpha {alpha}", file=sys.stderr)
     else:
         print("Skipped ctf_recordings.h (re-run export_ctf_raw_h.py with matching --alpha)")
+
+    wait_mode = "__NOP" if alpha <= 71 else "sleep"
+    print(f"CNN wait default for alpha={alpha}: {wait_mode} (<=71 uses __NOP; override -DE2E_CNN_WAIT_NOP)")
 
     print("\nNext:")
     print("  cd inference/indoor_env_1d_e2e && make -r -j 8 TARGET=MAX78002 BOARD=EvKit_V1")

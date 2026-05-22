@@ -115,9 +115,9 @@ Copying from Flash → `ctf_raw` in SRAM **before** the timed region is the **ca
       |
       |  T_prep  (M4F: Re/Im, global min–max, int8 map, pack)
       v
-   [CNN data memory]  int8 [2, α]
+   [MCU SRAM]  packed int8 words
       |
-      |  T_INP+INF
+      |  T_INP+INF  (copy packed words into CNN input memory + accelerator inference)
       v
    [MCU M4F]  T_act  (softmax, label)
       v
@@ -131,7 +131,10 @@ Copying from Flash → `ctf_raw` in SRAM **before** the timed region is the **ca
                                                           |
                     START TIMER  -------------------------+
                                                           v
-   [M4F]  T_prep:  ctf_raw → CNN input memory (int8 [2, α])
+   [M4F]  T_prep:  ctf_raw → packed int8 words in SRAM
+      |
+      v
+   [M4F]  packed int8 words → CNN input memory
       |
       v
    [CNN]  T_INP+INF
@@ -161,17 +164,11 @@ $$
 | Symbol | Meaning | Where measured |
 |--------|---------|----------------|
 | $T_{\mathrm{sense}}(\alpha)$ | One VNA sweep (α frequency points) | **Off EVKIT** — VNA / trigger → data ready in MCU RAM (conceptual); not measured on MAX78002 |
-| $T_{\mathrm{prep}}(\alpha)$ | Read `ctf_raw` in SRAM → Re/Im, global min–max, int8 map, pack to CNN buffers | Cortex-M4F; timer starts with raw buffer already valid |
-| $T_{\mathrm{INP+INF}}(\alpha)$ | Input load into CNN SRAM + accelerator inference | MAX78002 (Tables in paper) |
+| $T_{\mathrm{prep}}(\alpha)$ | Read `ctf_raw` in SRAM → Re/Im, global min–max, int8 map, pack into temporary words | Cortex-M4F; timer starts with raw buffer already valid |
+| $T_{\mathrm{INP+INF}}(\alpha)$ | Copy packed int8 words into CNN SRAM + accelerator inference | One fused input+inference window; report this to stay aligned with ADI PMON tables |
 | $T_{\mathrm{act}}$ | Post-processing (softmax, optional UART) | Cortex-M4F; usually small |
 
-Definitions (aligned with paper notation):
-
-$$
-T_{\mathrm{INP+INF}} = T_{\mathrm{INP}} + T_{\mathrm{INF}}
-$$
-
-If preprocessing **writes directly** into CNN input SRAM, $T_{\mathrm{INP}}$ may be negligible; state the convention used when reporting.
+In the e2e firmware, `preprocess_ctf_pack()` reports $T_{\mathrm{prep}}$, and a single continuous timer/GPIO window around `preprocess_ctf_load_input()` + `cnn_start()` reports $T_{\mathrm{INP+INF}}$. The ADI synthesis-demo PMON number called “input + inference” is still useful for comparison, but it uses `sampledata.h` input loading rather than the raw-CTF preprocessing path.
 
 ### Optional: amortized weight load
 
@@ -273,7 +270,7 @@ Example: `inference/indoor_env_1d_51_q8824/main.c`
 
 1. Define **`ctf_raw`** in **SRAM** (float or int16 Re/Im per bin; size $\mathcal{O}(\alpha)$).
 2. **Setup (untimed):** fill `ctf_raw` from a recorded dataset sweep (const array in Flash or debugger init).
-3. **Timed region:** `preprocess_ctf()` (`ctf_raw` → CNN input memory) = $T_{\mathrm{prep}}$; then `cnn_start()` / unload = $T_{\mathrm{INP+INF}}$; softmax = $T_{\mathrm{act}}$.
+3. **Timed region:** `preprocess_ctf_pack()` (`ctf_raw` → packed int8 words) = $T_{\mathrm{prep}}$; fused `preprocess_ctf_load_input()` + `cnn_start()` / IRQ = $T_{\mathrm{INP+INF}}$; softmax = $T_{\mathrm{act}}$.
 4. Repeat with other sweeps by overwriting `ctf_raw` between runs (mimics successive live classifications).
 
 **Code foundation (hybrid):**
@@ -292,8 +289,9 @@ All **Arm (M4F) application logic** — buffers, preprocessing math, timing, and
 | File | Responsibility | Timed stage |
 |------|----------------|-------------|
 | **`main.c`** | `ctf_raw[]` in SRAM; untimed sweep load; main loop; GPIO/timer start–stop; calls prep + CNN + softmax | Orchestrates all on-device stages |
-| **`preprocess_ctf()`** in `main.c` **or** `preprocess.c` / `preprocess.h` | Global min–max, int8 map, pack to CNN input addresses (§5) | **$T_{\mathrm{prep}}$** |
-| **`cnn.c` / `cnn.h`** | Load weights/bias, `cnn_start()`, unload activations — **leave as synthesis output** | **$T_{\mathrm{INP+INF}}$** |
+| **`preprocess_ctf_pack()`** in `preprocess.c` / `preprocess.h` | Global min–max, int8 map, pack to temporary SRAM words (§5) | **$T_{\mathrm{prep}}$** |
+| **`preprocess_ctf_load_input()` + `cnn_start()`** | Copy packed int8 words to CNN input addresses, then run accelerator | **$T_{\mathrm{INP+INF}}$** |
+| **`cnn.c` / `cnn.h`** | Load weights/bias, `cnn_start()`, unload activations — **leave as synthesis output** | Accelerator driver used inside **$T_{\mathrm{INP+INF}}$** |
 | **`softmax.c`** (or block in `main.c`) | Unpack logits, softmax, class index | **$T_{\mathrm{act}}$** |
 | **`sampledata.h`** (optional) | Const **raw** or golden vectors in Flash for setup only | **Not** in timed path if only used to init `ctf_raw` |
 | **`weights.h`** | Quantized kernels in Flash | Loaded once (or amortized $T_{\mathrm{W}}$) |
@@ -309,9 +307,10 @@ Maps §2.2 to concrete functions:
 
   TIMED (per run)
   ---------------
-  preprocess_ctf(ctf_raw, ...);         // SRAM → CNN input memory     →  T_prep
+  preprocess_ctf_pack(ctf_raw, ...);    // SRAM raw → packed int8      →  T_prep
   cnn_load_weights();  cnn_load_bias(); // if not already resident
-  cnn_start();                          // accelerator inference       →  T_INP+INF
+  preprocess_ctf_load_input();          // packed int8 → CNN SRAM      ┐
+  cnn_start();                          // accelerator inference       ┘→ T_INP+INF
   (wait; cnn_unload → ml_data)
   softmax_layer();                      // M4F post-process            →  T_act
 ```
@@ -330,10 +329,11 @@ void main(void) {
         fill_ctf_raw_from_recorded_sweep(run);   // untimed
 
         t0 = timer_start();
-        preprocess_ctf(ctf_raw, ALPHA);          // T_prep: §5 math → 0x5180…
+        preprocess_ctf_pack(ctf_raw, ALPHA);     // T_prep: §5 math → packed SRAM
         cnn_load_weights();
         cnn_load_bias();
-        cnn_start();                             // T_INP+INF
+        preprocess_ctf_load_input();             // packed SRAM → 0x5180… ┐
+        cnn_start();                             // accelerator inference ┘ T_INP+INF
         while (!cnn_time);
         cnn_unload(ml_data);
         softmax_layer();                         // T_act
@@ -342,7 +342,7 @@ void main(void) {
 }
 ```
 
-Replace `load_input()` + `memcpy32` from pre-baked int8 `sampledata.h` on the benchmark path; keep existing `load_input()` addresses as the **destination** of `preprocess_ctf()`.
+Replace `load_input()` + `memcpy32` from pre-baked int8 `sampledata.h` on the benchmark path; keep existing `load_input()` addresses as the **destination** of `preprocess_ctf_load_input()`.
 
 ### Loading `ctf_raw` (simulation) — practical options
 
